@@ -25,11 +25,15 @@
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=donut-vertical&title_color=3b4559&text_color=c9d1d9&icon_color=2d333b&bg_color=13171d&border_color=21262d" alt="Top Languages" width="25%" font-size="16px" />
 <br/>
   
-<p style="border: 1px solid red; padding: 5px; margin: 10px; text-align: center;">
+<div align="center">
+  
+<p style="border: 1px solid red; padding: 5px; margin: 10px; display: inline-block;">
   
 <b>Language & Tools | Programming language</b>
-  
+
 </p>
+
+</div>
   
 <div align="center">
   
