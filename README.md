@@ -51,7 +51,7 @@
 
 Copyright (c) 2025-2026 Slaughterhouse. All rights reserved.
 
-This README and its design are the intellectual property of Slaughterhouse
+### This README and its design are the intellectual property of Slaughterhouse
 Unauthorized copying, modification, or distribution is prohibited
 
 </div>
