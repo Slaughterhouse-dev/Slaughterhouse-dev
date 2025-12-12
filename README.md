@@ -39,11 +39,11 @@
 
 <div align="center">
   
+[![GitHub](https://img.shields.io/badge/Follow-Slaughterhouse-181717?style=flat&logo=github)](https://github.com/Slaughterhouse-dev)
+  
 <img src="https://komarev.com/ghpvc/?username=Slaughterhouse-dev" alt="Profile views" />
 
-[![GitHub](https://img.shields.io/badge/Follow-Slaughterhouse-181717?style=flat&logo=github)](https://github.com/Slaughterhouse-dev)
-
-<sub>© 2024 Slaughterhouse. This README design is my original work.</sub>
+<sub>© 2025-2026 Slaughterhouse. This README design is my original work.</sub>
 
 </div>
 
