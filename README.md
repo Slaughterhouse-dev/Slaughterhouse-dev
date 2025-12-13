@@ -49,10 +49,10 @@
 
 <sub>© 2025-2026 Slaughterhouse. This README design is my original work</sub>
 
-Copyright (c) 2025-2026 Slaughterhouse. All rights reserved.
+<sub>Copyright (c) 2025-2026 Slaughterhouse. All rights reserved</sub>
 
-### This README and its design are the intellectual property of Slaughterhouse
-Unauthorized copying, modification, or distribution is prohibited
+<sub>This README and its design are the intellectual property of Slaughterhouse
+Unauthorized copying, modification, or distribution is prohibited</sub>
 
 </div>
 
