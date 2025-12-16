@@ -50,9 +50,7 @@
 </div>
 
 <div align="center"> 
-<sub>© 2025-2026 Slaughterhouse. This README design is my original work</sub>
-
-<sub>Copyright (c) 2025-2026 Slaughterhouse. All rights reserved</sub>
+<sub>© 2025-2026 Slaughterhouse. This README design is my original work. Copyright (c) 2025-2026 Slaughterhouse. All rights reserved</sub>
 
 <sub>
 This README and its design are the intellectual property of Slaughterhouse
