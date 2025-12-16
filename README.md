@@ -39,10 +39,6 @@
   
 [![My Skills](https://skillicons.dev/icons?i=bash,github,unity,git,py,java,c,cs,cpp,php,lua,go,rust,js,ts,html,css,nodejs,react,angular,figma,obsidian,visualstudio,vscode,htmx)](https://skillicons.dev)
 
-</div>
-
-<div align="center">
-  
 [![GitHub](https://img.shields.io/badge/Follow-Slaughterhouse-181717?style=flat&logo=github)](https://github.com/Slaughterhouse-dev)
   
 <img src="https://komarev.com/ghpvc/?username=Slaughterhouse-dev" alt="Profile views" />
@@ -50,7 +46,7 @@
 </div>
 
 <div align="center"> 
-<sub> ## © 2025-2026 Slaughterhouse. This README design is my original work. Copyright (c) 2025-2026 Slaughterhouse. All rights reserved</sub>
+<sub> © 2025-2026 Slaughterhouse. This README design is my original work. Copyright (c) 2025-2026 Slaughterhouse. All rights reserved</sub>
 
 * This README and its design are the intellectual property of Slaughterhouse
 Unauthorized copying, modification, or distribution is prohibited
