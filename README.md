@@ -20,7 +20,7 @@
 </picture>
 <br/>
   
-<img src="https://github-readme-stats.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&title_color=3b4559&text_color=c9d1d9&icon_color=2d3545&bg_color=13171d&border_color=21262d&include_all_commits=true&count_private=true&show=reviews,prs_merged,prs_merged_percentage" alt="Slaughterhouse-dev's GitHub Stats" width="70%" />
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&background=13171d&border=21262d&ring=3b4559&fire=c9d1d9&currStreakLabel=c9d1d9" alt="GitHub Streak" width="70%" />
 
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=donut-vertical&title_color=3b4559&text_color=c9d1d9&icon_color=2d333b&bg_color=13171d&border_color=21262d&include_all_commits=true&count_private=true&langs_count=10" alt="Top Languages" width="25%" />
 
