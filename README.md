@@ -32,7 +32,7 @@
   
 <div align="center">
   
-<p style="border: 1px solid red; padding: 5px; margin: 10px; display: inline-block;">
+<p style="border: 1px solid red; padding: 4px; margin: 5px; display: inline-block;">
   
 ![Language & Tools](https://img.shields.io/badge/Language_&_Tools-Programming_language-13171d?style=for-the-badge&labelColor=21262d)
 
