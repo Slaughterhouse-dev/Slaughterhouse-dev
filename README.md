@@ -39,7 +39,7 @@
   
 [![My Skills](https://skillicons.dev/icons?i=bash,github,unity,git,py,java,c,cs,cpp,php,lua,go,rust,js,ts,html,css,nodejs,react,angular,figma,obsidian,visualstudio,vscode,htmx)](https://skillicons.dev)
 
-[![GitHub](https://img.shields.io/badge/Follow-Slaughterhouse-181717?style=for-the-badge&logo=github)](https://github.com/Slaughterhouse-dev)  &nbsp;&nbsp;  ![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
+[![GitHub](https://img.shields.io/badge/Follow-Slaughterhouse-181717?style=for-the-badge&logo=github)](https://github.com/Slaughterhouse-dev)  &nbsp;  ![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
 
 </div>
 
