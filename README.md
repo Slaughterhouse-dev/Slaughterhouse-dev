@@ -22,9 +22,9 @@
   
 <div align="center">
   
-<img src="https://github-readme-stats-sigma-five.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=4a5568&text_color=cbd5e0&icon_color=2d3748&bg_color=0f1419&border_color=1a202c" alt="GitHub Stats" width="60%" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=4a5568&text_color=cbd5e0&icon_color=2d3748&bg_color=0f1419&border_color=1a202c" alt="GitHub Stats" width="55%" />
   
-<img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=12&title_color=4a5568&text_color=cbd5e0&bg_color=0f1419&border_color=1a202c" alt="Top Languages" width="38%" />
+<img src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=12&title_color=4a5568&text_color=cbd5e0&bg_color=0f1419&border_color=1a202c" alt="Top Languages" width="40%" />
 </div>
 <br/>
 <div align="center">
