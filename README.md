@@ -24,7 +24,7 @@
 
 <div align="center">
   
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=ВАШ_USERNAME&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c&date_format=j%20M%5B%20Y%5D" alt="GitHub Streak" width="550" />
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c&date_format=j%20M%5B%20Y%5D" alt="GitHub Streak" width="550" />
 
 </div>
 
