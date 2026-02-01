@@ -23,12 +23,18 @@
 <div align="center">
 
 <div align="center">
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c" alt="GitHub Streak" width="550" />
+  
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=ВАШ_USERNAME&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c&date_format=j%20M%5B%20Y%5D" alt="GitHub Streak" width="550" />
+
 </div>
 
+
 <div align="center">
+  
 <img src="https://github-readme-stats-tau-two-25.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=4a5568&text_color=cbd5e0&icon_color=2d3748&bg_color=0f1419&border_color=1a202c&cache_seconds=1800" alt="GitHub Stats" height="180" />
+  
 <img src="https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=8&title_color=4a5568&text_color=cbd5e0&bg_color=0f1419&border_color=1a202c&cache_seconds=1800" alt="Top Languages" height="180" />
+
 </div>
 
 <br/>
