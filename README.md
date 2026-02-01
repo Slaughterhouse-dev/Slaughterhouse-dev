@@ -21,11 +21,10 @@
 <br/>
 
 <div align="center">
-  
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&theme=dark&count_private=true)
-  
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&theme=dark)
 
+<img src="https://github-readme-stats.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=4a5568&text_color=cbd5e0&icon_color=2d3748&bg_color=0f1419&border_color=1a202c&cache_seconds=1800&t=1737841200" alt="GitHub Stats" width="50%" />
+
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=9&title_color=4a5568&text_color=cbd5e0&bg_color=0f1419&border_color=1a202c&cache_seconds=1800&t=1737841200" alt="Top Languages" width="29%" />
 </div>
 
 <br/>
