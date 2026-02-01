@@ -1,4 +1,4 @@
-### About Me - Middle Developer In the company
+  ### About Me - Middle Developer In the company
 - Developer in Js, C++, C, Python, TypeScript, and other languages, I want to become a really good Full Stack programmer. Every day I work on my project for CS:GO. I'm also creating repositories for learning and my own information. In the future, I want to make a project for the browser game moomoo.io. For now, my plans are to finish my cheat Moovz and keep learning languages while growing every day with motivation
 ### My Focus Areas
 - Studying. Proficient in several languages: C, C#, C++, Java, JavaScript, TypeScript, Go, Rust, Python, ASM, PHP, Pascal. Learning libraries like React, TensorFlow, jQuery, Guava, STL, Boost, and others.
@@ -30,8 +30,8 @@
 
 <div align="center">
 
-[<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=true&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0" alt="GitHub Streak" width="550" />
-](https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c)
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=false&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&border=1a202c" alt="GitHub Streak" width="550" />
+
 </div>
 
 <br/>
