@@ -28,6 +28,12 @@
 
 </div>
 
+<div align="center">
+
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=Slaughterhouse-dev&theme=dark&hide_border=true&background=0f1419&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0" alt="GitHub Streak" />
+
+</div>
+
 <br/>
 <div align="center">
     
