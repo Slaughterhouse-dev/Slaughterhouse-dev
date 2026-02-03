@@ -31,7 +31,7 @@
 
 <div align="center">
   
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=Slaughterhouse-dev&theme=tokyo-night&bg_color=0f1419&color=cbd5e0&line=4a5568&point=cbd5e0&area=true&hide_border=false&border_color=1a202c" alt="Contribution Graph" width="550" />
+<img src="https://nirzak-streak-stats.vercel.app/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c" alt="GitHub Streak" width="550" />
 </div>
 
 <br/>
