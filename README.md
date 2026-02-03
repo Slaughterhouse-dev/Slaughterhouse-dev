@@ -31,7 +31,7 @@
 
 <div align="center">
   
-<img src="https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c&stroke=1a202c&ring=4a5568&fire=cbd5e0&currStreakLabel=cbd5e0&sideLabels=cbd5e0&currStreakNum=cbd5e0&dates=cbd5e0" alt="GitHub Streak" width="550" />
+<img src="https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark" alt="GitHub Streak" width="550" />
 </div>
 
 <br/>
