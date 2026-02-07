@@ -31,7 +31,7 @@
 
 <div align="center">
   
-<img src="https://nirzak-streak-stats.vercel.app/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c" alt="GitHub Streak" width="550" />
+![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c)
 </div>
 
 <br/>
