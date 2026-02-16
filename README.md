@@ -32,7 +32,7 @@
 <div align="center">
 
   
-![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c)
+![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c&date=20250217)
 </div>
 
 <br/>
