@@ -1,6 +1,6 @@
-![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
+
 <div align="center">
-  
+![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
 </div>
 <div align="center">
   
@@ -29,20 +29,10 @@
 
 <div align="center">
 
-  
 ![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c)
 </div>
 
 <br/>
-<div align="center">
-    
-![Language & Tools](https://img.shields.io/badge/Language_&_Tools-Programming_language-13171d?style=for-the-badge&labelColor=21262d)
-</div>
-  
-<div align="center">
-  
-[![My Skills](https://skillicons.dev/icons?i=bash,unity,git,py,java,c,cs,cpp,php,lua,go,rust,js,ts,html,css,nodejs,react,angular,figma,obsidian,visualstudio,vscode,htmx)](https://skillicons.dev)
-</div>
 
 </td>
 </tr>
