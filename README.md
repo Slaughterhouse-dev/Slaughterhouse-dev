@@ -1,7 +1,3 @@
-
-<div align="center">
-![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
-</div>
 <div align="center">
   
 <table>
@@ -30,6 +26,9 @@
 <div align="center">
 
 ![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c)
+
+![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
+
 </div>
 
 <br/>
