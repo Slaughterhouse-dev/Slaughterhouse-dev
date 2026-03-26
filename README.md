@@ -2,7 +2,7 @@
 
 <table>
 <tr>
-<td style="border: 2px solid #004082; padding: 16px; background-color: #1c3e5a;">
+<td style="border: 2px solid #1a202c; padding: 16px;">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Slaughterhouse-dev/Slaughterhouse-dev/output/github-snake-dark.svg" />
@@ -13,19 +13,17 @@
 <br/>
 
 <div align="center">
-  <img src="https://github-readme-stats-tau-two-25.vercel.app" alt="GitHub Stats" height="180" />
-  <img src="https://github-readme-stats-tau-two-25.vercel.app" alt="Top Languages" height="180" />
+  <img src="https://github-readme-stats-tau-two-25.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=4a5568&text_color=cbd5e0&icon_color=2d3748&bg_color=0f1419&border_color=1a202c&cache_seconds=1800" alt="GitHub Stats" height="180" />
+  <img src="https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=8&title_color=4a5568&text_color=cbd5e0&bg_color=0f1419&border_color=1a202c&cache_seconds=1800" alt="Top Languages" height="180" />
 </div>
 
 <br/>
 
 <div align="center">
 
-<img src="https://streak-stats.demolab.com" alt="GitHub Streak" />
+![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&theme=dark&background=0f1419&border=1a202c)
 
-<br/><br/>
-
-<img src="https://komarev.com" alt="Profile views" />
+![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge)
 
 </div>
 
