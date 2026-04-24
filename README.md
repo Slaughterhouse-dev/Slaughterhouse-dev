@@ -18,6 +18,8 @@
 
 ![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&background=0d1117&border=1e3a4a&ring=58a6ff&fire=ff7b2c&currStreakLabel=79c0ff&sideLabels=8b949e&dates=8b949e&sideNums=c9d1d9&currStreakNum=c9d1d9)
 
+[![spotify-github-profile](https://spotify-github-profile.kittinanx.com/api/view?uid=31leep2d5rpspzgszzi6glolhul4&cover_image=true&theme=spotify-embed&show_offline=true&background_color=121212&interchange=true&profanity=true&bar_color=53b14f&bar_color_cover=true&mode=dark)](https://spotify-github-profile.kittinanx.com/api/view?uid=31leep2d5rpspzgszzi6glolhul4&redirect=true)
+
 ![Profile views](https://komarev.com/ghpvc/?username=Slaughterhouse-dev&style=for-the-badge&color=58a6ff)
 
 </div>
