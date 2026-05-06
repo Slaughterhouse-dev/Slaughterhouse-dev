@@ -10,7 +10,7 @@
 </picture>
 
 <div align="center">
-  <img src="https://github-readme-stats-one-bice.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a&cache_seconds=1800" alt="GitHub Stats" height="180" />
+  <img src="https://github-readme-stats-one-bice.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a&cache_seconds=1800" alt="GitHub Stats" height="160" />
   <img src="https://github-readme-stats-one-bice.vercel.app/api/top-langs/?username=Slaughterhouse-dev&layout=compact&langs_count=8&title_color=79c0ff&text_color=c9d1d9&bg_color=0d1117&border_color=1e3a4a&cache_seconds=1800" alt="Top Languages" height="180" />
 </div>
 
