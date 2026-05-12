@@ -176,8 +176,8 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues) {
 
     // Language card: x=482, width=262, so right edge=744
     // Legend: x=490..620, Donut: cx=710, cy=110
-    const donutSVG  = donut(langs, 685, 128, 34);
-    const legendSVG = langLegend(langs, 492, 68, 22);
+    const donutSVG  = donut(langs, 685, 119, 34);
+    const legendSVG = langLegend(langs, 490, 68, 22);
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>Slaughterhouse-dev GitHub Stats</title>
