@@ -10,10 +10,8 @@
 </picture>
 
 <div align="center">
-  <img src="https://github-readme-stats-one-bice.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a&cache_seconds=1800" alt="GitHub Stats" height="180" />
-  <img src="https://github-readme-stats-one-bice.vercel.app/api/top-langs/?username=Slaughterhouse-dev&count_private=true&layout=donut-vertical&langs_count=8&title_color=79c0ff&text_color=c9d1d9&bg_color=0d1117&border_color=1e3a4a&cache_seconds=1800" alt="Top Languages" height="180" />
-</div>
-
+  <img src="https://github-readme-stats-git-master-slaughterhouses-projects.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a" alt="GitHub Stats" height="180" />
+  <img src="https://github-readme-stats-git-master-slaughterhouses-projects.vercel.app/api/top-langs/?username=Slaughterhouse-dev&count_private=true&layout=donut-vertical&langs_count=8&title_color=79c0ff&text_color=c9d1d9&bg_color=0d1117&border_color=1e3a4a" alt="Top Languages" height="180" /></div>
 <div align="center">
 
 ![GitHub Streak](https://streak-stats.demolab.com/?user=Slaughterhouse-dev&background=0d1117&border=1e3a4a&ring=58a6ff&fire=ff7b2c&currStreakLabel=79c0ff&sideLabels=8b949e&dates=8b949e&sideNums=c9d1d9&currStreakNum=c9d1d9)
