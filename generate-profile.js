@@ -177,7 +177,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues) {
     // Language card: x=482, width=262, so right edge=744
     // Legend: x=490..620, Donut: cx=710, cy=110
     const donutSVG  = donut(langs, 685, 119, 34);
-    const legendSVG = langLegend(langs, 490, 68, 22);
+    const legendSVG = langLegend(langs, 498, 68, 22);
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>Slaughterhouse-dev GitHub Stats</title>
@@ -211,7 +211,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues) {
 
 <!-- languages card -->
 <rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-<text x="490" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
+<text x="498" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
 ${legendSVG}
 ${donutSVG}
 
