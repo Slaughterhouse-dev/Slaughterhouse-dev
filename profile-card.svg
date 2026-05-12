@@ -1,33 +1,33 @@
 <svg width="760" height="330" viewBox="0 0 760 330"
         xmlns="http://www.w3.org/2000/svg" role="img">
-        <title>Slaughterhouse-dev — GitHub Stats</title>
+        <title>Slaughterhouse-dev GitHub Stats</title>
 
         <rect width="760" height="330" rx="10" fill="#171517" stroke="#212022" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
-        <text x="32" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="14" font-weight="600" fill="#91a1f1">Slaughterhouse's GitHub Stats</text>
+        <text x="32" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="#91a1f1">Slaughterhouse's GitHub Stats</text>
 
-        <text x="32"  y="78"  font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">⭐  Total Stars Earned:</text>
+        <text x="32"  y="78"  font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">Total Stars Earned:</text>
         <text x="270" y="78"  font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">3</text>
 
-        <text x="32"  y="102" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">🔄  Total Commits (last year):</text>
+        <text x="32"  y="102" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">Total Commits (last year):</text>
         <text x="270" y="102" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">242</text>
 
-        <text x="32"  y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">🔀  Total PRs:</text>
+        <text x="32"  y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">Total PRs:</text>
         <text x="270" y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">4</text>
 
-        <text x="32"  y="150" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">ℹ️   Total Issues:</text>
+        <text x="32"  y="150" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">Total Issues:</text>
         <text x="270" y="150" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">1</text>
 
-        <text x="32"  y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">📦  Contributed to:</text>
+        <text x="32"  y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">Contributed to:</text>
         <text x="270" y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">2</text>
 
         <circle cx="408" cy="112" r="38" fill="none" stroke="#212022" stroke-width="3"/>
-        <circle cx="408" cy="112" r="38" fill="none" stroke="#91a1f1" stroke-width="3"stroke-dasharray="190 50" stroke-dashoffset="47" transform="rotate(-90 408 112)"/>
-        <text x="408" y="119" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="17" font-weight="700" fill="#c8c8c8" text-anchor="middle">A+</text>
+        <circle cx="408" cy="112" r="38" fill="none" stroke="#91a1f1" stroke-width="3" stroke-dasharray="190 50" stroke-dashoffset="47" transform="rotate(-90 408 112)"/>
+        <text x="408" y="119" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="700" fill="#c8c8c8" text-anchor="middle">A+</text>
 
         <rect x="482" y="16" width="262" height="188" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
-        <text x="492" y="22" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="12" font-weight="600" fill="#91a1f1" dominant-baseline="hanging">Most Used Languages</text>
+        <text x="492" y="22" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="#91a1f1" dominant-baseline="hanging">Most Used Languages</text>
         
         <circle cx="492" cy="29" r="5" fill="#f34b7d"/>
         <text x="504" y="34" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#c8c8c8">C++</text>
@@ -73,17 +73,17 @@
 
         <rect x="16" y="220" width="728" height="94" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
 
-        <text x="192" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,410</text>
-        <text x="192" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="11" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
-        <text x="192" y="290" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="10" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 – Present</text>
+        <text x="192" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,410</text>
+        <text x="192" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
+        <text x="192" y="290" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 - Present</text>
 
         <line x1="368" y1="232" x2="368" y2="302" stroke="#212022" stroke-width="0.5"/>
         <line x1="558" y1="232" x2="558" y2="302" stroke="#212022" stroke-width="0.5"/>
 
-        <text x="464" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">10</text>
-        <text x="464" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="11" fill="#91a1f1" text-anchor="middle">Current Streak</text>
-        <text x="464" y="290" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="10" fill="#8c8c8c" text-anchor="middle">May 3 – May 12</text>
+        <text x="464" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">10</text>
+        <text x="464" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#91a1f1" text-anchor="middle">Current Streak</text>
+        <text x="464" y="290" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#8c8c8c" text-anchor="middle">May 3 - May 12</text>
 
-        <text x="654" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">22</text>
-        <text x="654" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"font-size="11" fill="#8c8c8c" text-anchor="middle">Longest Streak</text>
+        <text x="654" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">22</text>
+        <text x="654" y="273" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Longest Streak</text>
     </svg>
