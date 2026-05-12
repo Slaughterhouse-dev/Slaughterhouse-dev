@@ -9,9 +9,11 @@
   <img alt="github-snake" src="https://raw.githubusercontent.com/Slaughterhouse-dev/Slaughterhouse-dev/output/github-snake.svg" />
 </picture>
 
+// https://github-readme-stats-tau-two-25.vercel.app/api?username=Slaughterhouse-dev 
+// https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev
 <div align="center">
-  <img src="https://github-readme-stats-tau-two-25.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a&v=2" alt="GitHub Stats" height="180" />
-  <img src="https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev&count_private=true&layout=donut-vertical&langs_count=8&title_color=79c0ff&text_color=c9d1d9&bg_color=0d1117&border_color=1e3a4a&v=2" alt="Top Languages" height="180" />
+  <img src="&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a&v=2" alt="GitHub Stats" height="180" />
+  <img src="&count_private=true&layout=donut-vertical&langs_count=8&title_color=79c0ff&text_color=c9d1d9&bg_color=0d1117&border_color=1e3a4a&v=2" alt="Top Languages" height="180" />
 </div>
 
 <div align="center">
