@@ -11,7 +11,7 @@
 
 <div align="center">
   <img src="https://github-readme-stats-tau-two-25.vercel.app/api?username=Slaughterhouse-dev&show_icons=true&count_private=true&title_color=79c0ff&text_color=c9d1d9&icon_color=58a6ff&bg_color=0d1117&border_color=1e3a4a" alt="GitHub Stats" height="200" />
-  <img src="https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev&count_private=true&langs_count=8&layout=donut&bg_color=0d1117&title_color=79c0ff&text_color=c9d1d9&border_color=1e3a4a" alt="Top Languages" height="195" />
+  <img src="https://github-readme-stats-tau-two-25.vercel.app/api/top-langs/?username=Slaughterhouse-dev&count_private=true&langs_count=6&layout=donut&bg_color=0d1117&title_color=79c0ff&text_color=c9d1d9&border_color=1e3a4a" alt="Top Languages" height="195" />
 </div>
 
 <div align="center">
