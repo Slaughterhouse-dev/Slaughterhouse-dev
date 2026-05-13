@@ -20,7 +20,7 @@ jobs:
 
       - name: Generate profile card
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: node generate-profile.js
 
       - name: Commit & push
