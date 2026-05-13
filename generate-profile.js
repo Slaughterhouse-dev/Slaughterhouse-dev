@@ -1,8 +1,8 @@
 const https = require("https");
 const fs = require("fs");
 
-const Usename = "Slaughterhouse-dev";
-const Token = process.env.GITHUB_TOKEN;
+const username = "Slaughterhouse-dev";
+const token = process.env.GITHUB_TOKEN;
 
 const S = {
     bg: "#171517",
@@ -21,7 +21,7 @@ function gql(query, variables) {
             path: "/graphql",
             method: "POST",
             headers: {
-                Authorization: `Bearer ${Token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
                 "Content-Length": Buffer.byteLength(body),
                 "User-Agent": "profile-card-generator",
@@ -29,12 +29,12 @@ function gql(query, variables) {
         }, (res) => {
             let raw = "";
             res.on("data", c => raw += c);
-            res.on("end", () => { 
-                try { 
-                    resolve(JSON.parse(raw)); 
-                } catch(e) { 
-                    reject(e); 
-                } 
+            res.on("end", () => {
+                try {
+                    resolve(JSON.parse(raw));
+                } catch (e) {
+                    reject(e);
+                }
             });
         });
         req.on("error", reject);
@@ -50,7 +50,7 @@ async function fetchData() {
     const yearFragments = years.map((y, i) => `
         y${i}: contributionsCollection(
             from: "${y}-01-01T00:00:00Z"
-            to:   "${y}-12-31T23:59:59Z"
+            to: "${y}-12-31T23:59:59Z"
         ) {
             totalCommitContributions
             totalPullRequestContributions
@@ -66,10 +66,10 @@ async function fetchData() {
                     nodes {
                         stargazerCount
                         languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
-                            edges { 
-                                size node { 
-                                    name color 
-                                } 
+                            edges {
+                                size node {
+                                    name color
+                                }
                             }
                         }
                     }
@@ -78,23 +78,23 @@ async function fetchData() {
                     contributionCalendar {
                         totalContributions
                         weeks {
-                            contributionDays { 
-                                contributionCount date 
+                            contributionDays {
+                                contributionCount date
                             }
                         }
                     }
                 }
                 ${yearFragments}
-                followers { 
-                    totalCount 
+                followers {
+                    totalCount
                 }
-                repositoriesContributedTo(first: 1 contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]) { 
-                    totalCount 
+                repositoriesContributedTo(first: 1 contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]) {
+                    totalCount
                 }
             }
         }
-    `, { 
-        login: Usename 
+    `, {
+        login: username
     });
 
     return data.user;
@@ -105,33 +105,37 @@ function calcStreak(weeks) {
     const today = new Date().toISOString().slice(0, 10);
 
     let current = 0, startCurrent = "", endCurrent = "";
-    for (const d of days) {
-        if (d.date > today) continue;
-        if (current === 0 && d.contributionCount === 0 && d.date !== today) break;
-        if (d.contributionCount > 0) {
+    for (const day of days) {
+        if (day.date > today) {
+            continue;
+        }
+        if (current === 0 && day.contributionCount === 0 && day.date !== today) {
+            break;
+        }
+        if (day.contributionCount > 0) {
             current++;
-            if (!endCurrent) endCurrent = d.date;
-            startCurrent = d.date;
-        } else if (d.date !== today) break;
+            if (!endCurrent) {
+                endCurrent = day.date;
+            }
+            startCurrent = day.date;
+        } else if (day.date !== today) {
+            break;
+        }
     }
 
-    let longest = 0, temp = 0, tempStart = "", startLongest = "", endLongest = "";
-    const asc = [...days].reverse();
-    for (const d of asc) {
-        if (d.contributionCount > 0) {
-            if (temp === 0) tempStart = d.date;
+    let longest = 0, temp = 0;
+    for (const day of [...days].reverse()) {
+        if (day.contributionCount > 0) {
             temp++;
             if (temp > longest) {
                 longest = temp;
-                startLongest = tempStart;
-                endLongest = d.date;
             }
         } else {
             temp = 0;
         }
     }
 
-    return { current, longest, startCurrent, endCurrent, startLongest, endLongest };
+    return { current, longest, startCurrent, endCurrent };
 }
 
 function topLangs(repos) {
@@ -139,7 +143,10 @@ function topLangs(repos) {
     let total = 0;
     for (const repo of repos) {
         for (const { size, node } of repo.languages.edges) {
-            if (!map[node.name]) map[node.name] = { size: 0, color: node.color || S.muted };
+            if (!map[node.name]) map[node.name] = {
+                size: 0,
+                color: node.color || S.muted
+            };
             map[node.name].size += size;
             total += size;
         }
@@ -165,10 +172,16 @@ function calculateRank({ commits, prs, issues, stars, followers }) {
     const normalcdf = (mean, sigma, to) => {
         const z = (to - mean) / Math.sqrt(2 * sigma * sigma);
         const t = 1 / (1 + 0.3275911 * Math.abs(z));
-        const erf = 1 - (((((1.061405429*t - 1.453152027)*t + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t) * Math.exp(-z*z);
+        const erf = 1 - (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) * Math.exp(-z * z);
         return 0.5 * (1 + (z >= 0 ? erf : -erf));
     };
-    const score = (2 * exponentialCdf(commits / 250) + 3 * exponentialCdf(prs / 50) + 1 * exponentialCdf(issues / 25) + 4 * exponentialCdf(stars / 50) + 1 * exponentialCdf(followers / 10)) / 11;
+    const score = (
+        2 * exponentialCdf(commits / 250) +
+        3 * exponentialCdf(prs / 50) +
+        1 * exponentialCdf(issues / 25) +
+        4 * exponentialCdf(stars / 50) +
+        1 * exponentialCdf(followers / 10)
+    ) / 11;
     return 100 - 100 * normalcdf(score, 1, 0.75);
 }
 
@@ -177,7 +190,7 @@ function donut(langs, cx, cy, r) {
     let offset = 0;
     const segs = langs.map(({ color, pct }) => {
         const dash = (pct / 100) * circ;
-        const seg  = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+        const seg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
             stroke="${color}" stroke-width="10"
             stroke-dasharray="${dash.toFixed(2)} ${(circ - dash).toFixed(2)}"
             stroke-dashoffset="${(-offset).toFixed(2)}"
@@ -197,73 +210,66 @@ function langLegend(langs, x, startY, gap) {
     }).join("");
 }
 
-function generateSVG(user, streak, langs, stars, commits, prs, issues, followers) {
+function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
-    const rankPercentile = calculateRank({ commits, prs, issues, stars, followers });
     const circ = 2 * Math.PI * 38;
     const ringFill = Math.max(0.1, (1 - rankPercentile / 100)) * circ;
     const ringGap = circ - ringFill;
 
-    // Language card: x=482, width=262, so right edge=744
-    // Legend: x=490..620, Donut: cx=710, cy=110
     const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
 
+    const font = `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`;
+
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
-<title>Slaughterhouse-dev GitHub Stats</title>
+        <title>Slaughterhouse-dev GitHub Stats</title>
 
-<!-- bg -->
-<rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
+        <rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
-<!-- stats card -->
-<rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-<text x="32" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
+        <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
+        <text x="32" y="44"  ${font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
 
-<text x="32"  y="78"  font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="${S.muted}">Total Stars Earned:</text>
-<text x="260" y="78"  font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
+        <text x="32" y="78"  ${font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
+        <text x="260" y="78"  ${font} font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
 
-<text x="32"  y="102" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="${S.muted}">Total Commits (last year):</text>
-<text x="260" y="102" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
+        <text x="32" y="102" ${font} font-size="12" fill="${S.muted}">Total Commits (last year):</text>
+        <text x="260" y="102" ${font} font-size="12" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
 
-<text x="32"  y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="${S.muted}">Total PRs:</text>
-<text x="260" y="126" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="${S.text}">${prs}</text>
+        <text x="32" y="126" ${font} font-size="12" fill="${S.muted}">Total PRs:</text>
+        <text x="260" y="126" ${font} font-size="12" font-weight="600" fill="${S.text}">${prs}</text>
 
-<text x="32"  y="150" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="${S.muted}">Total Issues:</text>
-<text x="260" y="150" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="${S.text}">${issues}</text>
+        <text x="32" y="150" ${font} font-size="12" fill="${S.muted}">Total Issues:</text>
+        <text x="260" y="150" ${font} font-size="12" font-weight="600" fill="${S.text}">${issues}</text>
 
-<text x="32"  y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="${S.muted}">Contributed to (last year):</text>
-<text x="260" y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
+        <text x="32" y="174" ${font} font-size="12" fill="${S.muted}">Contributed to (last year):</text>
+        <text x="260" y="174" ${font} font-size="12" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
 
-<!-- rank ring -->
-<circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
-<circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}" stroke-dashoffset="${(-(circ * 0.25)).toFixed(1)}" transform="rotate(-90 408 112)"/>
-<text x="408" y="119" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
+        <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
+        <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}" stroke-dashoffset="${(-(circ * 0.25)).toFixed(1)}" transform="rotate(-90 408 112)"/>
+        <text x="408" y="119" ${font} font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
-<!-- languages card -->
-<rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-<text x="506" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
-${legendSVG}
-${donutSVG}
+        <rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
+        <text x="506" y="44"  ${font} font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
+        ${legendSVG}
+        ${donutSVG}
 
-<!-- streak card -->
-<rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
+        <rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-<text x="192" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-<text x="192" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-<text x="192" y="288" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="192" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="192" y="272" ${font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="192" y="288" ${font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
-<line x1="368" y1="232" x2="368" y2="302" stroke="${S.border}" stroke-width="0.5"/>
-<line x1="558" y1="232" x2="558" y2="302" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="368" y1="232" x2="368" y2="302" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="558" y1="232" x2="558" y2="302" stroke="${S.border}" stroke-width="0.5"/>
 
-<text x="464" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-<text x="464" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-<text x="464" y="288" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <text x="464" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="464" y="272" ${font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="464" y="288" ${font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-<text x="654" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-<text x="654" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
-</svg>`;
+        <text x="654" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="654" y="272" ${font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+    </svg>`;
 }
-
 
 (async () => {
     console.log("Fetching GitHub data...");
@@ -273,12 +279,25 @@ ${donutSVG}
     const streak = calcStreak(user.contributionsCollection.contributionCalendar.weeks);
     const stars = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
 
-    const commits = (user.y0?.totalCommitContributions ?? 0) + (user.y1?.totalCommitContributions ?? 0) + (user.y0?.restrictedContributionsCount ?? 0) + (user.y1?.restrictedContributionsCount ?? 0);
-    const prs = (user.y0?.totalPullRequestContributions ?? 0) + (user.y1?.totalPullRequestContributions ?? 0);
-    const issues = (user.y0?.totalIssueContributions ?? 0) + (user.y1?.totalIssueContributions ?? 0);
+    const commits =
+        (user.y0?.totalCommitContributions ?? 0) +
+        (user.y1?.totalCommitContributions ?? 0) +
+        (user.y0?.restrictedContributionsCount ?? 0) +
+        (user.y1?.restrictedContributionsCount ?? 0);
+    const prs =
+        (user.y0?.totalPullRequestContributions ?? 0) +
+        (user.y1?.totalPullRequestContributions ?? 0);
+    const issues =
+        (user.y0?.totalIssueContributions ?? 0) +
+        (user.y1?.totalIssueContributions ?? 0);
 
     const followers = user.followers.totalCount;
-    const svg = generateSVG(user, streak, langs, stars, commits, prs, issues, followers);
+    const rankPercentile = calculateRank({ commits, prs, issues, stars, followers });
+
+    const svg = generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile);
     fs.writeFileSync("profile-card.svg", svg);
     console.log("Good: profile-card.svg saved");
-})().catch(e => { console.error(e); process.exit(1); });
+})().catch(e => {
+    console.error(e);
+    process.exit(1);
+});
