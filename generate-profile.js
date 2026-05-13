@@ -59,7 +59,7 @@ async function fetchData() {
     const { data } = await gql(`
         query($login: String!) {
             user(login: $login) {
-                repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+                repositories(ownerAffiliations: OWNER, first: 100) {
                     nodes {
                         stargazerCount
                         languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
@@ -216,7 +216,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues) {
 
 <!-- rank ring -->
 <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
-<circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="190 50" stroke-dashoffset="47" transform="rotate(-90 408 112)"/>
+<circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="155 84" stroke-dashoffset="39" transform="rotate(-90 408 112)"/>
 <text x="408" y="119" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
 <!-- languages card -->
@@ -255,7 +255,7 @@ ${donutSVG}
     const stars  = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
 
     // Sum commits/PRs/issues across fetched years
-    const commits = (user.y0?.totalCommitContributions ?? 0) + (user.y1?.totalCommitContributions ?? 0);
+    const commits = (user.y0?.totalCommitContributions ?? 0) + (user.y1?.totalCommitContributions ?? 0) + (user.y0?.restrictedContributionsCount ?? 0) + (user.y1?.restrictedContributionsCount ?? 0);
     const prs     = (user.y0?.totalPullRequestContributions ?? 0) + (user.y1?.totalPullRequestContributions ?? 0);
     const issues  = (user.y0?.totalIssueContributions ?? 0) + (user.y1?.totalIssueContributions ?? 0);
 
