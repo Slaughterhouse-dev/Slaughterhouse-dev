@@ -1,19 +1,17 @@
 const https = require("https");
-const fs    = require("fs");
+const fs = require("fs");
 
-const USERNAME = "Slaughterhouse-dev";
-const TOKEN    = process.env.GITHUB_TOKEN;
+const Usename = "Slaughterhouse-dev";
+const Token = process.env.GITHUB_TOKEN;
 
 const S = {
-    bg:      "#171517",
-    bgCard:  "#1d1b1d",
-    border:  "#212022",
-    accent:  "#91a1f1",
-    text:    "#c8c8c8",
-    muted:   "#8c8c8c",
+    bg: "#171517",
+    bgCard: "#1d1b1d",
+    border: "#212022",
+    accent: "#91a1f1",
+    text: "#c8c8c8",
+    muted: "#8c8c8c",
 };
-
-// ── fetch ────────────────────────────────────────────────────────────────────
 
 function gql(query, variables) {
     return new Promise((resolve, reject) => {
@@ -23,7 +21,7 @@ function gql(query, variables) {
             path: "/graphql",
             method: "POST",
             headers: {
-                Authorization: `Bearer ${TOKEN}`,
+                Authorization: `Bearer ${Token}`,
                 "Content-Type": "application/json",
                 "Content-Length": Buffer.byteLength(body),
                 "User-Agent": "profile-card-generator",
@@ -31,7 +29,13 @@ function gql(query, variables) {
         }, (res) => {
             let raw = "";
             res.on("data", c => raw += c);
-            res.on("end", () => { try { resolve(JSON.parse(raw)); } catch(e) { reject(e); } });
+            res.on("end", () => { 
+                try { 
+                    resolve(JSON.parse(raw)); 
+                } catch(e) { 
+                    reject(e); 
+                } 
+            });
         });
         req.on("error", reject);
         req.write(body);
@@ -40,8 +44,7 @@ function gql(query, variables) {
 }
 
 async function fetchData() {
-    // Fetch contributions for multiple years to get accurate totals
-    const now   = new Date();
+    const now = new Date();
     const years = [now.getFullYear(), now.getFullYear() - 1];
 
     const yearFragments = years.map((y, i) => `
@@ -63,7 +66,11 @@ async function fetchData() {
                     nodes {
                         stargazerCount
                         languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
-                            edges { size node { name color } }
+                            edges { 
+                                size node { 
+                                    name color 
+                                } 
+                            }
                         }
                     }
                 }
@@ -71,27 +78,30 @@ async function fetchData() {
                     contributionCalendar {
                         totalContributions
                         weeks {
-                            contributionDays { contributionCount date }
+                            contributionDays { 
+                                contributionCount date 
+                            }
                         }
                     }
                 }
                 ${yearFragments}
-                followers { totalCount }
-        repositoriesContributedTo(
-                    first: 1
-                    contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]
-                ) { totalCount }
+                followers { 
+                    totalCount 
+                }
+                repositoriesContributedTo(first: 1 contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]) { 
+                    totalCount 
+                }
             }
         }
-    `, { login: USERNAME });
+    `, { 
+        login: Usename 
+    });
 
     return data.user;
 }
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-
 function calcStreak(weeks) {
-    const days  = weeks.flatMap(w => w.contributionDays).sort((a, b) => a.date < b.date ? 1 : -1);
+    const days = weeks.flatMap(w => w.contributionDays).sort((a, b) => a.date < b.date ? 1 : -1);
     const today = new Date().toISOString().slice(0, 10);
 
     let current = 0, startCurrent = "", endCurrent = "";
@@ -134,14 +144,11 @@ function topLangs(repos) {
             total += size;
         }
     }
-    return Object.entries(map)
-        .sort((a, b) => b[1].size - a[1].size)
-        .slice(0, 6)
-        .map(([name, { size, color }]) => ({
-            name: name.length > 13 ? name.slice(0, 12) + "." : name,
-            color,
-            pct: ((size / total) * 100).toFixed(1),
-        }));
+    return Object.entries(map).sort((a, b) => b[1].size - a[1].size).slice(0, 6).map(([name, { size, color }]) => ({
+        name: name.length > 13 ? name.slice(0, 12) + "." : name,
+        color,
+        pct: ((size / total) * 100).toFixed(1),
+    }));
 }
 
 function fmtDate(iso) {
@@ -153,9 +160,6 @@ function fmtNum(n) {
     return n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n);
 }
 
-// ── SVG pieces ───────────────────────────────────────────────────────────────
-
-
 function calculateRank({ commits, prs, issues, stars, followers }) {
     const exponentialCdf = x => 1 - Math.pow(2, -x);
     const normalcdf = (mean, sigma, to) => {
@@ -164,13 +168,7 @@ function calculateRank({ commits, prs, issues, stars, followers }) {
         const erf = 1 - (((((1.061405429*t - 1.453152027)*t + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t) * Math.exp(-z*z);
         return 0.5 * (1 + (z >= 0 ? erf : -erf));
     };
-    const score = (
-        2 * exponentialCdf(commits / 250) +
-        3 * exponentialCdf(prs / 50) +
-        1 * exponentialCdf(issues / 25) +
-        4 * exponentialCdf(stars / 50) +
-        1 * exponentialCdf(followers / 10)
-    ) / 11;
+    const score = (2 * exponentialCdf(commits / 250) + 3 * exponentialCdf(prs / 50) + 1 * exponentialCdf(issues / 25) + 4 * exponentialCdf(stars / 50) + 1 * exponentialCdf(followers / 10)) / 11;
     return 100 - 100 * normalcdf(score, 1, 0.75);
 }
 
@@ -194,12 +192,10 @@ function langLegend(langs, x, startY, gap) {
     return langs.map(({ name, color, pct }, i) => {
         const y = startY + i * gap;
         return `
-<circle cx="${x}" cy="${y - 4}" r="4" fill="${color}"/>
-<text x="${x + 11}" y="${y}" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
+            <circle cx="${x}" cy="${y - 4}" r="4" fill="${color}"/>
+            <text x="${x + 11}" y="${y}" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
     }).join("");
 }
-
-// ── main SVG ─────────────────────────────────────────────────────────────────
 
 function generateSVG(user, streak, langs, stars, commits, prs, issues, followers) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
@@ -210,7 +206,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, followers
 
     // Language card: x=482, width=262, so right edge=744
     // Legend: x=490..620, Donut: cx=710, cy=110
-    const donutSVG  = donut(langs, 685, 119, 34);
+    const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
@@ -268,20 +264,18 @@ ${donutSVG}
 </svg>`;
 }
 
-// ── main ─────────────────────────────────────────────────────────────────────
 
 (async () => {
     console.log("Fetching GitHub data...");
     const user = await fetchData();
 
-    const langs  = topLangs(user.repositories.nodes);
+    const langs = topLangs(user.repositories.nodes);
     const streak = calcStreak(user.contributionsCollection.contributionCalendar.weeks);
-    const stars  = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
+    const stars = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
 
-    // Sum commits/PRs/issues across fetched years
     const commits = (user.y0?.totalCommitContributions ?? 0) + (user.y1?.totalCommitContributions ?? 0) + (user.y0?.restrictedContributionsCount ?? 0) + (user.y1?.restrictedContributionsCount ?? 0);
-    const prs     = (user.y0?.totalPullRequestContributions ?? 0) + (user.y1?.totalPullRequestContributions ?? 0);
-    const issues  = (user.y0?.totalIssueContributions ?? 0) + (user.y1?.totalIssueContributions ?? 0);
+    const prs = (user.y0?.totalPullRequestContributions ?? 0) + (user.y1?.totalPullRequestContributions ?? 0);
+    const issues = (user.y0?.totalIssueContributions ?? 0) + (user.y1?.totalIssueContributions ?? 0);
 
     const followers = user.followers.totalCount;
     const svg = generateSVG(user, streak, langs, stars, commits, prs, issues, followers);
