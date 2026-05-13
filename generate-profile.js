@@ -76,7 +76,8 @@ async function fetchData() {
                     }
                 }
                 ${yearFragments}
-                repositoriesContributedTo(
+                followers { totalCount }
+        repositoriesContributedTo(
                     first: 1
                     contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]
                 ) { totalCount }
@@ -154,6 +155,25 @@ function fmtNum(n) {
 
 // ── SVG pieces ───────────────────────────────────────────────────────────────
 
+
+function calculateRank({ commits, prs, issues, stars, followers }) {
+    const exponentialCdf = x => 1 - Math.pow(2, -x);
+    const normalcdf = (mean, sigma, to) => {
+        const z = (to - mean) / Math.sqrt(2 * sigma * sigma);
+        const t = 1 / (1 + 0.3275911 * Math.abs(z));
+        const erf = 1 - (((((1.061405429*t - 1.453152027)*t + 1.421413741)*t - 0.284496736)*t + 0.254829592)*t) * Math.exp(-z*z);
+        return 0.5 * (1 + (z >= 0 ? erf : -erf));
+    };
+    const score = (
+        2 * exponentialCdf(commits / 250) +
+        3 * exponentialCdf(prs / 50) +
+        1 * exponentialCdf(issues / 25) +
+        4 * exponentialCdf(stars / 50) +
+        1 * exponentialCdf(followers / 10)
+    ) / 11;
+    return 100 - 100 * normalcdf(score, 1, 0.75);
+}
+
 function donut(langs, cx, cy, r) {
     const circ = 2 * Math.PI * r;
     let offset = 0;
@@ -181,8 +201,12 @@ function langLegend(langs, x, startY, gap) {
 
 // ── main SVG ─────────────────────────────────────────────────────────────────
 
-function generateSVG(user, streak, langs, stars, commits, prs, issues) {
+function generateSVG(user, streak, langs, stars, commits, prs, issues, followers) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
+    const rankPercentile = calculateRank({ commits, prs, issues, stars, followers });
+    const circ = 2 * Math.PI * 38;
+    const ringFill = Math.max(0.1, (1 - rankPercentile / 100)) * circ;
+    const ringGap = circ - ringFill;
 
     // Language card: x=482, width=262, so right edge=744
     // Legend: x=490..620, Donut: cx=710, cy=110
@@ -216,7 +240,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues) {
 
 <!-- rank ring -->
 <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
-<circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="155 84" stroke-dashoffset="39" transform="rotate(-90 408 112)"/>
+<circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}" stroke-dashoffset="${(-(circ * 0.25)).toFixed(1)}" transform="rotate(-90 408 112)"/>
 <text x="408" y="119" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
 <!-- languages card -->
@@ -259,7 +283,8 @@ ${donutSVG}
     const prs     = (user.y0?.totalPullRequestContributions ?? 0) + (user.y1?.totalPullRequestContributions ?? 0);
     const issues  = (user.y0?.totalIssueContributions ?? 0) + (user.y1?.totalIssueContributions ?? 0);
 
-    const svg = generateSVG(user, streak, langs, stars, commits, prs, issues);
+    const followers = user.followers.totalCount;
+    const svg = generateSVG(user, streak, langs, stars, commits, prs, issues, followers);
     fs.writeFileSync("profile-card.svg", svg);
     console.log("Good: profile-card.svg saved");
 })().catch(e => { console.error(e); process.exit(1); });
