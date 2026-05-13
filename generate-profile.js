@@ -11,6 +11,7 @@ const S = {
     accent: "#91a1f1",
     text: "#c8c8c8",
     muted: "#8c8c8c",
+    font: `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`,
 };
 
 function gql(query, variables) {
@@ -204,10 +205,9 @@ function donut(langs, cx, cy, r) {
 function langLegend(langs, x, startY, gap) {
     return langs.map(({ name, color, pct }, i) => {
         const y = startY + i * gap;
-        const font = `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`;
         return `
             <circle cx="${x}" cy="${y - 4}" r="4" fill="${color}"/>
-            <text x="${x + 11}" y="${y}" ${font} font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
+            <text x="${x + 11}" y="${y}" ${S.font} font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
     }).join("");
 }
 
@@ -220,55 +220,53 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
     const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
 
-    const font = `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`;
-
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Slaughterhouse-dev GitHub Stats</title>
 
         <rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="32" y="44"  ${font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
+        <text x="32" y="44"  ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
 
-        <text x="32" y="78"  ${font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
-        <text x="260" y="78"  ${font} font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
+        <text x="32" y="78"  ${S.font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
+        <text x="260" y="78"  ${S.font} font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
 
-        <text x="32" y="102" ${font} font-size="12" fill="${S.muted}">Total Commits (last year):</text>
-        <text x="260" y="102" ${font} font-size="12" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
+        <text x="32" y="102" ${S.font} font-size="12" fill="${S.muted}">Total Commits (last year):</text>
+        <text x="260" y="102" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
 
-        <text x="32" y="126" ${font} font-size="12" fill="${S.muted}">Total PRs:</text>
-        <text x="260" y="126" ${font} font-size="12" font-weight="600" fill="${S.text}">${prs}</text>
+        <text x="32" y="126" ${S.font} font-size="12" fill="${S.muted}">Total PRs:</text>
+        <text x="260" y="126" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${prs}</text>
 
-        <text x="32" y="150" ${font} font-size="12" fill="${S.muted}">Total Issues:</text>
-        <text x="260" y="150" ${font} font-size="12" font-weight="600" fill="${S.text}">${issues}</text>
+        <text x="32" y="150" ${S.font} font-size="12" fill="${S.muted}">Total Issues:</text>
+        <text x="260" y="150" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${issues}</text>
 
-        <text x="32" y="174" ${font} font-size="12" fill="${S.muted}">Contributed to (last year):</text>
-        <text x="260" y="174" ${font} font-size="12" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
+        <text x="32" y="174" ${S.font} font-size="12" fill="${S.muted}">Contributed to (last year):</text>
+        <text x="260" y="174" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
 
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}" stroke-dashoffset="${(-(circ * 0.25)).toFixed(1)}" transform="rotate(-90 408 112)"/>
-        <text x="408" y="119" ${font} font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
+        <text x="408" y="119" ${S.font} font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
         <rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="506" y="44"  ${font} font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
+        <text x="506" y="44"  ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
         ${legendSVG}
         ${donutSVG}
 
         <rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="192" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="192" y="272" ${font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="192" y="288" ${font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="192" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="192" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="192" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
         <line x1="368" y1="232" x2="368" y2="302" stroke="${S.border}" stroke-width="0.5"/>
         <line x1="558" y1="232" x2="558" y2="302" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="464" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="464" y="272" ${font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="464" y="288" ${font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <text x="464" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="464" y="272" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="464" y="288" ${S.font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-        <text x="654" y="254" ${font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="654" y="272" ${font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="654" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="654" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
