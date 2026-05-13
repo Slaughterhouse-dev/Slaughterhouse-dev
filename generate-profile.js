@@ -204,9 +204,10 @@ function donut(langs, cx, cy, r) {
 function langLegend(langs, x, startY, gap) {
     return langs.map(({ name, color, pct }, i) => {
         const y = startY + i * gap;
+        const font = `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`;
         return `
             <circle cx="${x}" cy="${y - 4}" r="4" fill="${color}"/>
-            <text x="${x + 11}" y="${y}" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
+            <text x="${x + 11}" y="${y}" ${font} font-size="11" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
     }).join("");
 }
 
