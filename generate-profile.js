@@ -104,13 +104,23 @@ function calcStreak(weeks) {
         } else if (d.date !== today) break;
     }
 
-    let longest = 0, temp = 0;
-    for (const d of [...days].reverse()) {
-        temp = d.contributionCount > 0 ? temp + 1 : 0;
-        if (temp > longest) longest = temp;
+    let longest = 0, temp = 0, tempStart = "", startLongest = "", endLongest = "";
+    const asc = [...days].reverse();
+    for (const d of asc) {
+        if (d.contributionCount > 0) {
+            if (temp === 0) tempStart = d.date;
+            temp++;
+            if (temp > longest) {
+                longest = temp;
+                startLongest = tempStart;
+                endLongest = d.date;
+            }
+        } else {
+            temp = 0;
+        }
     }
 
-    return { current, longest, startCurrent, endCurrent };
+    return { current, longest, startCurrent, endCurrent, startLongest, endLongest };
 }
 
 function topLangs(repos) {
