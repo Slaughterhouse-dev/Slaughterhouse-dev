@@ -51,7 +51,7 @@ async function fetchData() {
     const yearFragments = years.map((y, i) => `
         y${i}: contributionsCollection(
             from: "${y}-01-01T00:00:00Z"
-            to: "${y}-12-31T23:59:59Z"
+            to:   "${y}-12-31T23:59:59Z"
         ) {
             totalCommitContributions
             totalPullRequestContributions
@@ -89,7 +89,10 @@ async function fetchData() {
                 followers {
                     totalCount
                 }
-                repositoriesContributedTo(first: 1 contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]) {
+                repositoriesContributedTo(
+                    first: 1
+                    contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]
+                ) {
                     totalCount
                 }
             }
@@ -152,11 +155,14 @@ function topLangs(repos) {
             total += size;
         }
     }
-    return Object.entries(map).sort((a, b) => b[1].size - a[1].size).slice(0, 6).map(([name, { size, color }]) => ({
-        name: name.length > 13 ? name.slice(0, 12) + "." : name,
-        color,
-        pct: ((size / total) * 100).toFixed(1),
-    }));
+    return Object.entries(map)
+        .sort((a, b) => b[1].size - a[1].size)
+        .slice(0, 6)
+        .map(([name, { size, color }]) => ({
+            name: name.length > 13 ? name.slice(0, 12) + "." : name,
+            color,
+            pct: ((size / total) * 100).toFixed(1),
+        }));
 }
 
 function fmtDate(iso) {
@@ -226,47 +232,50 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         <rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="32" y="44"  ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
+        <text x="32" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
 
-        <text x="32" y="78"  ${S.font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
+        <text x="32"  y="78"  ${S.font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
         <text x="260" y="78"  ${S.font} font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
 
-        <text x="32" y="102" ${S.font} font-size="12" fill="${S.muted}">Total Commits (last year):</text>
+        <text x="32"  y="102" ${S.font} font-size="12" fill="${S.muted}">Total Commits (last year):</text>
         <text x="260" y="102" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
 
-        <text x="32" y="126" ${S.font} font-size="12" fill="${S.muted}">Total PRs:</text>
+        <text x="32"  y="126" ${S.font} font-size="12" fill="${S.muted}">Total PRs:</text>
         <text x="260" y="126" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${prs}</text>
 
-        <text x="32" y="150" ${S.font} font-size="12" fill="${S.muted}">Total Issues:</text>
+        <text x="32"  y="150" ${S.font} font-size="12" fill="${S.muted}">Total Issues:</text>
         <text x="260" y="150" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${issues}</text>
 
-        <text x="32" y="174" ${S.font} font-size="12" fill="${S.muted}">Contributed to (last year):</text>
+        <text x="32"  y="174" ${S.font} font-size="12" fill="${S.muted}">Contributed to (last year):</text>
         <text x="260" y="174" ${S.font} font-size="12" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
 
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
-        <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3" stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}" stroke-dashoffset="${(-(circ * 0.25)).toFixed(1)}" transform="rotate(-90 408 112)"/>
+        <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3"
+            stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}"
+            stroke-dashoffset="0"
+            transform="rotate(-90 408 112)"/>
         <text x="408" y="119" ${S.font} font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
         <rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="506" y="44"  ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
+        <text x="506" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Most Used Languages</text>
         ${legendSVG}
         ${donutSVG}
 
         <rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="192" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="192" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="192" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="137" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="137" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="137" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
-        <line x1="368" y1="232" x2="368" y2="302" stroke="${S.border}" stroke-width="0.5"/>
-        <line x1="558" y1="232" x2="558" y2="302" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="259" y1="232" x2="259" y2="302" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="501" y1="232" x2="501" y2="302" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="464" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="464" y="272" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="464" y="288" ${S.font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <text x="380" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="380" y="272" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="380" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-        <text x="654" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="654" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="621" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="621" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
@@ -283,9 +292,11 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         (user.y1?.totalCommitContributions ?? 0) +
         (user.y0?.restrictedContributionsCount ?? 0) +
         (user.y1?.restrictedContributionsCount ?? 0);
+
     const prs =
         (user.y0?.totalPullRequestContributions ?? 0) +
         (user.y1?.totalPullRequestContributions ?? 0);
+
     const issues =
         (user.y0?.totalIssueContributions ?? 0) +
         (user.y1?.totalIssueContributions ?? 0);
