@@ -5,13 +5,13 @@ const username = "Slaughterhouse-dev";
 const token = process.env.GITHUB_TOKEN;
 
 const S = {
-    bg: "#171517",
+    bg:     "#171517",
     bgCard: "#1d1b1d",
     border: "#212022",
     accent: "#91a1f1",
-    text: "#c8c8c8",
-    muted: "#8c8c8c",
-    font: `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`,
+    text:   "#c8c8c8",
+    muted:  "#8c8c8c",
+    font:   `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`,
 };
 
 function gql(query, variables) {
@@ -19,23 +19,20 @@ function gql(query, variables) {
         const body = JSON.stringify({ query, variables });
         const req = https.request({
             hostname: "api.github.com",
-            path: "/graphql",
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
+            path:     "/graphql",
+            method:   "POST",
+            headers:  {
+                Authorization:  `Bearer ${token}`,
                 "Content-Type": "application/json",
                 "Content-Length": Buffer.byteLength(body),
-                "User-Agent": "profile-card-generator",
+                "User-Agent":   "profile-card-generator",
             },
         }, (res) => {
             let raw = "";
             res.on("data", c => raw += c);
             res.on("end", () => {
-                try {
-                    resolve(JSON.parse(raw));
-                } catch (e) {
-                    reject(e);
-                }
+                try   { resolve(JSON.parse(raw)); }
+                catch (e) { reject(e); }
             });
         });
         req.on("error", reject);
@@ -68,9 +65,7 @@ async function fetchData() {
                         stargazerCount
                         languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
                             edges {
-                                size node {
-                                    name color
-                                }
+                                size node { name color }
                             }
                         }
                     }
@@ -79,27 +74,19 @@ async function fetchData() {
                     contributionCalendar {
                         totalContributions
                         weeks {
-                            contributionDays {
-                                contributionCount date
-                            }
+                            contributionDays { contributionCount date }
                         }
                     }
                 }
                 ${yearFragments}
-                followers {
-                    totalCount
-                }
+                followers { totalCount }
                 repositoriesContributedTo(
                     first: 1
                     contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]
-                ) {
-                    totalCount
-                }
+                ) { totalCount }
             }
         }
-    `, {
-        login: username
-    });
+    `, { login: username });
 
     return data.user;
 }
@@ -110,30 +97,20 @@ function calcStreak(weeks) {
 
     let current = 0, startCurrent = "", endCurrent = "";
     for (const day of days) {
-        if (day.date > today) {
-            continue;
-        }
-        if (current === 0 && day.contributionCount === 0 && day.date !== today) {
-            break;
-        }
+        if (day.date > today) continue;
+        if (current === 0 && day.contributionCount === 0 && day.date !== today) break;
         if (day.contributionCount > 0) {
             current++;
-            if (!endCurrent) {
-                endCurrent = day.date;
-            }
+            if (!endCurrent) endCurrent = day.date;
             startCurrent = day.date;
-        } else if (day.date !== today) {
-            break;
-        }
+        } else if (day.date !== today) break;
     }
 
     let longest = 0, temp = 0;
     for (const day of [...days].reverse()) {
         if (day.contributionCount > 0) {
             temp++;
-            if (temp > longest) {
-                longest = temp;
-            }
+            if (temp > longest) longest = temp;
         } else {
             temp = 0;
         }
@@ -144,25 +121,18 @@ function calcStreak(weeks) {
 
 function topLangs(repos) {
     const map = {};
-    let total = 0;
     for (const repo of repos) {
         for (const { size, node } of repo.languages.edges) {
-            if (!map[node.name]) map[node.name] = {
-                size: 0,
-                color: node.color || S.muted
-            };
+            if (!map[node.name]) map[node.name] = { size: 0, color: node.color || S.muted };
             map[node.name].size += size;
-            total += size;
         }
     }
-    const top = Object.entries(map)
-        .sort((a, b) => b[1].size - a[1].size)
-        .slice(0, 6);
+    const top = Object.entries(map).sort((a, b) => b[1].size - a[1].size).slice(0, 6);
     const topTotal = top.reduce((s, [, v]) => s + v.size, 0);
     return top.map(([name, { size, color }]) => ({
-        name: name.length > 13 ? name.slice(0, 12) + "." : name,
+        name:  name.length > 13 ? name.slice(0, 12) + "." : name,
         color,
-        pct: ((size / topTotal) * 100).toFixed(1),
+        pct:   ((size / topTotal) * 100).toFixed(1),
     }));
 }
 
@@ -184,10 +154,10 @@ function calculateRank({ commits, prs, issues, stars, followers }) {
         return 0.5 * (1 + (z >= 0 ? erf : -erf));
     };
     const score = (
-        2 * exponentialCdf(commits / 250) +
-        3 * exponentialCdf(prs / 50) +
-        1 * exponentialCdf(issues / 25) +
-        4 * exponentialCdf(stars / 50) +
+        2 * exponentialCdf(commits  / 250) +
+        3 * exponentialCdf(prs      / 50)  +
+        1 * exponentialCdf(issues   / 25)  +
+        4 * exponentialCdf(stars    / 50)  +
         1 * exponentialCdf(followers / 10)
     ) / 11;
     return 100 - 100 * normalcdf(score, 1, 0.75);
@@ -218,14 +188,24 @@ function langLegend(langs, x, startY, gap) {
     }).join("");
 }
 
+function flame(cx, cy) {
+    return `
+        <polygon points="${cx},${cy - 14} ${cx - 6},${cy - 7} ${cx - 4},${cy - 2} ${cx - 8},${cy + 4} ${cx},${cy + 7} ${cx + 8},${cy + 4} ${cx + 4},${cy - 2} ${cx + 6},${cy - 7}" fill="#ff7b2c"/>
+        <polygon points="${cx},${cy - 7} ${cx - 3},${cy - 2} ${cx - 2},${cy + 2} ${cx},${cy + 4} ${cx + 2},${cy + 2} ${cx + 3},${cy - 2}" fill="#ffaa44"/>`;
+}
+
 function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
     const circ = 2 * Math.PI * 38;
     const ringFill = Math.max(0.1, (1 - rankPercentile / 100)) * circ;
     const ringGap = circ - ringFill;
 
+    const streakCirc = 2 * Math.PI * 28;
+    const streakRingFill = streakCirc;
+
     const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
+    const flameSVG = flame(380, 238);
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Slaughterhouse-dev GitHub Stats</title>
@@ -271,9 +251,11 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         <line x1="259" y1="232" x2="259" y2="302" stroke="${S.border}" stroke-width="0.5"/>
         <line x1="501" y1="232" x2="501" y2="302" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="380" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="380" y="272" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="380" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <circle cx="380" cy="265" r="28" fill="none" stroke="${S.accent}" stroke-width="2.5"/>
+        ${flameSVG}
+        <text x="380" y="271" ${S.font} font-size="20" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="380" y="287" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="380" y="300" ${S.font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
         <text x="621" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
         <text x="621" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
@@ -303,7 +285,9 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         (user.y1?.totalIssueContributions ?? 0);
 
     const followers = user.followers.totalCount;
-    const rankPercentile = calculateRank({ commits, prs, issues, stars, followers });
+
+    const commitsForRank = user.y0?.totalCommitContributions ?? 0;
+    const rankPercentile = calculateRank({ commits: commitsForRank, prs, issues, stars, followers });
 
     const svg = generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile);
     fs.writeFileSync("profile-card.svg", svg);
