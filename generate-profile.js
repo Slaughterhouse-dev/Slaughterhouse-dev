@@ -155,14 +155,15 @@ function topLangs(repos) {
             total += size;
         }
     }
-    return Object.entries(map)
+    const top = Object.entries(map)
         .sort((a, b) => b[1].size - a[1].size)
-        .slice(0, 6)
-        .map(([name, { size, color }]) => ({
-            name: name.length > 13 ? name.slice(0, 12) + "." : name,
-            color,
-            pct: ((size / total) * 100).toFixed(1),
-        }));
+        .slice(0, 6);
+    const topTotal = top.reduce((s, [, v]) => s + v.size, 0);
+    return top.map(([name, { size, color }]) => ({
+        name: name.length > 13 ? name.slice(0, 12) + "." : name,
+        color,
+        pct: ((size / topTotal) * 100).toFixed(1),
+    }));
 }
 
 function fmtDate(iso) {
