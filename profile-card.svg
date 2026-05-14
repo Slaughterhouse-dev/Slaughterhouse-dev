@@ -74,16 +74,16 @@
 
         <rect x="16" y="220" width="728" height="94" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
 
-        <text x="192" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,448</text>
+        <text x="192" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,449</text>
         <text x="192" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
         <text x="192" y="288" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 - Present</text>
 
         <line x1="368" y1="232" x2="368" y2="302" stroke="#212022" stroke-width="0.5"/>
         <line x1="558" y1="232" x2="558" y2="302" stroke="#212022" stroke-width="0.5"/>
 
-        <text x="464" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">11</text>
+        <text x="464" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">12</text>
         <text x="464" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#91a1f1" text-anchor="middle">Current Streak</text>
-        <text x="464" y="288" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#8c8c8c"  text-anchor="middle">May 3 - May 13</text>
+        <text x="464" y="288" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#8c8c8c"  text-anchor="middle">May 3 - May 14</text>
 
         <text x="654" y="254" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="700" fill="#c8c8c8" text-anchor="middle">22</text>
         <text x="654" y="272" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Longest Streak</text>
