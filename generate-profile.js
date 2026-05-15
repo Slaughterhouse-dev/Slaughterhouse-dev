@@ -197,6 +197,12 @@ function langLegend(langs, x, startY, gap) {
     }).join("");
 }
 
+function flamePath(cx, cy) {
+    // Flame centered at cx, tip at cy-12, base at cy+6
+    return `<path d="M${cx},${cy+6} C${cx-10},${cy+6} ${cx-14},${cy} ${cx-10},${cy-5} C${cx-8},${cy-9} ${cx-5},${cy-7} ${cx-5},${cy-11} C${cx-3},${cy-8} ${cx-1},${cy-6} ${cx},${cy-12} C${cx+1},${cy-6} ${cx+3},${cy-8} ${cx+5},${cy-11} C${cx+5},${cy-7} ${cx+8},${cy-9} ${cx+10},${cy-5} C${cx+14},${cy} ${cx+10},${cy+6} ${cx},${cy+6} Z" fill="#ff7b2c"/>
+        <path d="M${cx},${cy+2} C${cx-5},${cy+2} ${cx-7},${cy-1} ${cx-5},${cy-4} C${cx-4},${cy-6} ${cx-2},${cy-5} ${cx-2},${cy-8} C${cx-1},${cy-6} ${cx},${cy-5} ${cx},${cy-7} C${cx},${cy-5} ${cx+1},${cy-6} ${cx+2},${cy-8} C${cx+2},${cy-5} ${cx+4},${cy-6} ${cx+5},${cy-4} C${cx+7},${cy-1} ${cx+5},${cy+2} ${cx},${cy+2} Z" fill="#ffcc44"/>`;
+}
+
 function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
     const circ = 2 * Math.PI * 38;
@@ -207,19 +213,20 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
     const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
 
-    // Streak section layout (card y=220..314, section x=259..501, center x=380)
-    // Circle r=24, center cy=262 → top=238, bottom=286
-    // Flame: two ellipses sitting on top of circle at cy=233
-    // Number: cy=268 (inside circle)
-    // Label: y=283
-    // Dates: y=296
-    const scx = 380, scy = 262, sr = 24;
-    const streakCirc = 2 * Math.PI * sr;
+    // Streak section: card y=220, height=110 → bottom=330
+    // Circle r=30, center cy=272
+    // Flame center cy = 272 - 30 - 10 = 232 (flame tip at 220, base at 238)
+    // Number: y=279
+    // Label: y=316
+    // Dates: y=328
+    const scx = 380, scy = 272, sr = 30;
+    const streakRingCirc = 2 * Math.PI * sr;
+    const flameY = scy - sr - 10;
 
-    return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
+    return `<svg width="760" height="350" viewBox="0 0 760 350" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>S0x2-dev GitHub Stats</title>
 
-        <rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
+        <rect width="760" height="350" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
         <text x="32" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">S0x2-dev's GitHub Stats</text>
@@ -251,25 +258,23 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         ${legendSVG}
         ${donutSVG}
 
-        <rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
+        <rect x="16" y="220" width="728" height="114" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="137" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="137" y="270" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="137" y="284" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="137" y="258" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="137" y="276" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="137" y="290" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
-        <line x1="259" y1="232" x2="259" y2="302" stroke="${S.border}" stroke-width="0.5"/>
-        <line x1="501" y1="232" x2="501" y2="302" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="259" y1="230" x2="259" y2="326" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="501" y1="230" x2="501" y2="326" stroke="${S.border}" stroke-width="0.5"/>
 
-        <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="2.5"
-            stroke-dasharray="${streakCirc.toFixed(1)} 0"/>
-        <ellipse cx="${scx}" cy="${scy - sr - 6}" rx="5" ry="7" fill="#ff7b2c"/>
-        <ellipse cx="${scx}" cy="${scy - sr - 4}" rx="3" ry="4" fill="#ffcc44"/>
-        <text x="${scx}" y="${scy + 6}" ${S.font} font-size="18" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="${scx}" y="${scy + sr + 14}" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="${scx}" y="${scy + sr + 26}" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="2.5"/>
+        ${flamePath(scx, flameY)}
+        <text x="${scx}" y="${scy + 7}" ${S.font} font-size="22" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="${scx}" y="${scy + sr + 16}" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="${scx}" y="${scy + sr + 28}" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-        <text x="621" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="621" y="270" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="621" y="258" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="621" y="276" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
