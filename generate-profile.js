@@ -22,10 +22,10 @@ function gql(query, variables) {
             path:     "/graphql",
             method:   "POST",
             headers:  {
-                Authorization:  `Bearer ${token}`,
-                "Content-Type": "application/json",
+                Authorization:    `Bearer ${token}`,
+                "Content-Type":   "application/json",
                 "Content-Length": Buffer.byteLength(body),
-                "User-Agent":   "profile-card-generator",
+                "User-Agent":     "profile-card-generator",
             },
         }, (res) => {
             let raw = "";
@@ -154,13 +154,22 @@ function calculateRank({ commits, prs, issues, stars, followers }) {
         return 0.5 * (1 + (z >= 0 ? erf : -erf));
     };
     const score = (
-        2 * exponentialCdf(commits  / 250) +
-        3 * exponentialCdf(prs      / 50)  +
-        1 * exponentialCdf(issues   / 25)  +
-        4 * exponentialCdf(stars    / 50)  +
+        2 * exponentialCdf(commits   / 250) +
+        3 * exponentialCdf(prs       / 50)  +
+        1 * exponentialCdf(issues    / 25)  +
+        4 * exponentialCdf(stars     / 50)  +
         1 * exponentialCdf(followers / 10)
     ) / 11;
     return 100 - 100 * normalcdf(score, 1, 0.75);
+}
+
+function rankRingFill(percentile) {
+    const THRESHOLDS = [1, 85, 92, 96, 98, 99, 99.5, 99.8, 100];
+    const FILLS      = [0.92, 0.72, 0.57, 0.45, 0.35, 0.25, 0.18, 0.12, 0.08];
+    for (let i = 0; i < THRESHOLDS.length; i++) {
+        if (percentile <= THRESHOLDS[i]) return FILLS[i];
+    }
+    return FILLS[FILLS.length - 1];
 }
 
 function donut(langs, cx, cy, r) {
@@ -188,24 +197,24 @@ function langLegend(langs, x, startY, gap) {
     }).join("");
 }
 
-function flame(cx, cy) {
-    return `
-        <polygon points="${cx},${cy - 14} ${cx - 6},${cy - 7} ${cx - 4},${cy - 2} ${cx - 8},${cy + 4} ${cx},${cy + 7} ${cx + 8},${cy + 4} ${cx + 4},${cy - 2} ${cx + 6},${cy - 7}" fill="#ff7b2c"/>
-        <polygon points="${cx},${cy - 7} ${cx - 3},${cy - 2} ${cx - 2},${cy + 2} ${cx},${cy + 4} ${cx + 2},${cy + 2} ${cx + 3},${cy - 2}" fill="#ffaa44"/>`;
-}
-
 function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
     const circ = 2 * Math.PI * 38;
-    const ringFill = Math.max(0.1, (1 - rankPercentile / 100)) * circ;
+    const fill = rankRingFill(rankPercentile);
+    const ringFill = fill * circ;
     const ringGap = circ - ringFill;
-
-    const streakCirc = 2 * Math.PI * 28;
-    const streakRingFill = streakCirc;
 
     const donutSVG = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
-    const flameSVG = flame(380, 238);
+
+    // Streak section layout (card y=220..314, section x=259..501, center x=380)
+    // Circle r=24, center cy=262 → top=238, bottom=286
+    // Flame: two ellipses sitting on top of circle at cy=233
+    // Number: cy=268 (inside circle)
+    // Label: y=283
+    // Dates: y=296
+    const scx = 380, scy = 262, sr = 24;
+    const streakCirc = 2 * Math.PI * sr;
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>Slaughterhouse-dev GitHub Stats</title>
@@ -245,20 +254,22 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         <rect x="16" y="220" width="728" height="94" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
         <text x="137" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="137" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="137" y="288" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="137" y="270" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="137" y="284" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
         <line x1="259" y1="232" x2="259" y2="302" stroke="${S.border}" stroke-width="0.5"/>
         <line x1="501" y1="232" x2="501" y2="302" stroke="${S.border}" stroke-width="0.5"/>
 
-        <circle cx="380" cy="265" r="28" fill="none" stroke="${S.accent}" stroke-width="2.5"/>
-        ${flameSVG}
-        <text x="380" y="271" ${S.font} font-size="20" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="380" y="287" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="380" y="300" ${S.font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="2.5"
+            stroke-dasharray="${streakCirc.toFixed(1)} 0"/>
+        <ellipse cx="${scx}" cy="${scy - sr - 6}" rx="5" ry="7" fill="#ff7b2c"/>
+        <ellipse cx="${scx}" cy="${scy - sr - 4}" rx="3" ry="4" fill="#ffcc44"/>
+        <text x="${scx}" y="${scy + 6}" ${S.font} font-size="18" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="${scx}" y="${scy + sr + 14}" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="${scx}" y="${scy + sr + 26}" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
         <text x="621" y="254" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="621" y="272" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="621" y="270" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
@@ -285,7 +296,6 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         (user.y1?.totalIssueContributions ?? 0);
 
     const followers = user.followers.totalCount;
-
     const commitsForRank = user.y0?.totalCommitContributions ?? 0;
     const rankPercentile = calculateRank({ commits: commitsForRank, prs, issues, stars, followers });
 
