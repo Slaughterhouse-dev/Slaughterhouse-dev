@@ -1,7 +1,7 @@
 const https = require("https");
 const fs = require("fs");
 
-const username = "Slaughterhouse-dev";
+const username = "S0x2-dev";
 const token = process.env.GITHUB_TOKEN;
 
 const S = {
@@ -217,12 +217,12 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
     const streakCirc = 2 * Math.PI * sr;
 
     return `<svg width="760" height="330" viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" role="img">
-        <title>Slaughterhouse-dev GitHub Stats</title>
+        <title>S0x2-dev GitHub Stats</title>
 
         <rect width="760" height="330" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="32" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">Slaughterhouse's GitHub Stats</text>
+        <text x="32" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">S0x2-dev's GitHub Stats</text>
 
         <text x="32"  y="78"  ${S.font} font-size="12" fill="${S.muted}">Total Stars Earned:</text>
         <text x="260" y="78"  ${S.font} font-size="12" font-weight="600" fill="${S.text}">${stars}</text>
