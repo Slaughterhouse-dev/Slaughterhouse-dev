@@ -184,23 +184,34 @@ function langLegend(langs, x, startY, gap) {
     return langs.map(({ name, color, pct }, i) => {
         const y = startY + i * gap;
         return `
-            <circle cx="${x}" cy="${y - 5}" r="4" fill="${color}"/>
-            <text x="${x + 12}" y="${y}" ${S.font} font-size="14" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
+            <circle cx="${x}" cy="${y - 4}" r="4" fill="${color}"/>
+            <text x="${x + 11}" y="${y}" ${S.font} font-size="12" fill="${S.text}">${name} <tspan fill="${S.muted}">${pct}%</tspan></text>`;
     }).join("");
 }
 
-function flame(cx, cy, size) {
-    // Bootstrap Icons "fire" path (16x16 viewBox), scaled and translated.
-    const scale = size / 16;
-    const tx = cx - size / 2;
-    const ty = cy - size / 2;
+function flame(cx, cy, size, color, ringStroke) {
+    // Outline candle-flame inspired by Material Design "local_fire_department":
+    // the path winds the outer flame contour and folds inward once to draw the
+    // characteristic inner "lick". 24x24 viewBox, centered at (12,12).
+    const scale = size / 24;
+    const tx = cx - 12 * scale;
+    const ty = cy - 12 * scale;
+    const sw = (ringStroke / scale).toFixed(2);
     return `
-        <ellipse cx="${cx}" cy="${cy + size * 0.15}" rx="${size * 0.55}" ry="${size * 0.7}" fill="url(#flame-glow)"/>
         <g transform="translate(${tx} ${ty}) scale(${scale})">
-            <path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16Z"
-                fill="url(#flame-outer)"/>
-            <path d="M8 15c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15Z"
-                fill="url(#flame-inner)"/>
+            <path d="M 19.48 12.35
+                     c -1.57 -4.08 -7.16 -4.3 -5.81 -10.23
+                     c .1 -.44 -.37 -.78 -.75 -.55
+                     C 9.29 3.71 6.68 8 8.87 13.62
+                     c .18 .46 -.36 .89 -.75 .59
+                     c -1.81 -1.37 -2 -3.34 -1.84 -4.75
+                     c .06 -.52 -.62 -.77 -.91 -.34
+                     C 4.69 10.16 4 11.84 4 14.37
+                     c .38 5.6 5.11 7.32 6.81 7.54
+                     c 2.43 .31 5.06 -.14 6.95 -1.87
+                     c 2.08 -1.93 2.84 -5.01 1.72 -7.69 z"
+                  fill="none" stroke="${color}" stroke-width="${sw}"
+                  stroke-linejoin="round" stroke-linecap="round"/>
         </g>`;
 }
 
@@ -213,87 +224,79 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
     const rankGap  = rankCirc - rankFill;
 
     const donutSVG  = donut(langs, 685, 119, 34);
-    const legendSVG = langLegend(langs, 506, 70, 25);
+    const legendSVG = langLegend(langs, 506, 64, 22);
 
     // Streak card: y=220, height=160, bottom=380. SVG height=396.
-    // Circle sits a bit lower so the flame fits above its top edge inside the card.
-    const scx = 380, scy = 286, sr = 34;
-    const flameSize = 34;
-    const flameSVG  = flame(scx, scy - sr + 2, flameSize);
+    const scx = 380, scy = 280, sr = 34;
+    const ringStroke = 2.5;
+    // Small outline flame sitting on top of the ring, same colour/weight as the ring stroke.
+    const flameSize = 20;
+    const flameSVG  = flame(scx, scy - sr - 1, flameSize, S.accent, ringStroke);
 
-    // Side sections vertically centered around y=300 with bigger fonts.
+    // Side sections vertically centered around y=300.
     const sideNumY   = 293;
-    const sideLabelY = 315;
-    const sideDateY  = 332;
+    const sideLabelY = 311;
+    const sideDateY  = 324;
 
     return `<svg width="760" height="396" viewBox="0 0 760 396" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>S0x2-dev GitHub Stats</title>
 
         <defs>
-            <linearGradient id="flame-outer" x1="50%" y1="100%" x2="50%" y2="0%">
-                <stop offset="0%"   stop-color="#FFAB00"/>
-                <stop offset="55%"  stop-color="#FF6D00"/>
-                <stop offset="100%" stop-color="#DD2C00"/>
-            </linearGradient>
-            <linearGradient id="flame-inner" x1="50%" y1="100%" x2="50%" y2="0%">
-                <stop offset="0%"   stop-color="#FFF59D"/>
-                <stop offset="100%" stop-color="#FFC400"/>
-            </linearGradient>
-            <radialGradient id="flame-glow" cx="50%" cy="60%" r="50%">
-                <stop offset="0%"   stop-color="#FF9100" stop-opacity="0.35"/>
-                <stop offset="100%" stop-color="#FF9100" stop-opacity="0"/>
-            </radialGradient>
+            <mask id="streak-ring-cut">
+                <rect width="760" height="396" fill="white"/>
+                <rect x="${scx - 6}" y="${scy - sr - 2}" width="12" height="5" fill="black"/>
+            </mask>
         </defs>
 
         <rect width="760" height="396" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="32" y="46" ${S.font} font-size="17" font-weight="600" fill="${S.accent}">S0x2-dev's GitHub Stats</text>
+        <text x="32" y="44" ${S.font} font-size="15" font-weight="600" fill="${S.accent}">S0x2-dev's GitHub Stats</text>
 
-        <text x="32"  y="82"  ${S.font} font-size="15" fill="${S.muted}">Total Stars Earned:</text>
-        <text x="260" y="82"  ${S.font} font-size="15" font-weight="600" fill="${S.text}">${stars}</text>
+        <text x="32"  y="76"  ${S.font} font-size="13" fill="${S.muted}">Total Stars Earned:</text>
+        <text x="260" y="76"  ${S.font} font-size="13" font-weight="600" fill="${S.text}">${stars}</text>
 
-        <text x="32"  y="108" ${S.font} font-size="15" fill="${S.muted}">Total Commits (last year):</text>
-        <text x="260" y="108" ${S.font} font-size="15" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
+        <text x="32"  y="100" ${S.font} font-size="13" fill="${S.muted}">Total Commits (last year):</text>
+        <text x="260" y="100" ${S.font} font-size="13" font-weight="600" fill="${S.text}">${fmtNum(commits)}</text>
 
-        <text x="32"  y="134" ${S.font} font-size="15" fill="${S.muted}">Total PRs:</text>
-        <text x="260" y="134" ${S.font} font-size="15" font-weight="600" fill="${S.text}">${prs}</text>
+        <text x="32"  y="124" ${S.font} font-size="13" fill="${S.muted}">Total PRs:</text>
+        <text x="260" y="124" ${S.font} font-size="13" font-weight="600" fill="${S.text}">${prs}</text>
 
-        <text x="32"  y="160" ${S.font} font-size="15" fill="${S.muted}">Total Issues:</text>
-        <text x="260" y="160" ${S.font} font-size="15" font-weight="600" fill="${S.text}">${issues}</text>
+        <text x="32"  y="148" ${S.font} font-size="13" fill="${S.muted}">Total Issues:</text>
+        <text x="260" y="148" ${S.font} font-size="13" font-weight="600" fill="${S.text}">${issues}</text>
 
-        <text x="32"  y="186" ${S.font} font-size="15" fill="${S.muted}">Contributed to (last year):</text>
-        <text x="260" y="186" ${S.font} font-size="15" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
+        <text x="32"  y="172" ${S.font} font-size="13" fill="${S.muted}">Contributed to (last year):</text>
+        <text x="260" y="172" ${S.font} font-size="13" font-weight="600" fill="${S.text}">${user.repositoriesContributedTo.totalCount}</text>
 
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3"
             stroke-dasharray="${rankFill.toFixed(1)} ${rankGap.toFixed(1)}"
             stroke-dashoffset="0"
             transform="rotate(-90 408 112)"/>
-        <text x="408" y="120" ${S.font} font-size="20" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
+        <text x="408" y="118" ${S.font} font-size="18" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
 
         <rect x="482" y="16" width="262" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
-        <text x="506" y="46" ${S.font} font-size="17" font-weight="600" fill="${S.accent}">Most Used Languages</text>
+        <text x="506" y="44" ${S.font} font-size="15" font-weight="600" fill="${S.accent}">Most Used Languages</text>
         ${legendSVG}
         ${donutSVG}
 
         <rect x="16" y="220" width="728" height="160" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="137" y="${sideNumY}"   ${S.font} font-size="27" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="137" y="${sideLabelY}" ${S.font} font-size="14" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="137" y="${sideDateY}"  ${S.font} font-size="13" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="137" y="${sideNumY}"   ${S.font} font-size="25" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="137" y="${sideLabelY}" ${S.font} font-size="12" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="137" y="${sideDateY}"  ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
         <line x1="259" y1="232" x2="259" y2="372" stroke="${S.border}" stroke-width="0.5"/>
         <line x1="501" y1="232" x2="501" y2="372" stroke="${S.border}" stroke-width="0.5"/>
 
-        <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="2.5"/>
+        <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="${ringStroke}" mask="url(#streak-ring-cut)"/>
         ${flameSVG}
-        <text x="${scx}" y="${scy + 10}"      ${S.font} font-size="27" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
-        <text x="${scx}" y="${scy + sr + 28}" ${S.font} font-size="14" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="${scx}" y="${scy + sr + 46}" ${S.font} font-size="13" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <text x="${scx}" y="${scy + 9}"       ${S.font} font-size="25" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="${scx}" y="${scy + sr + 30}" ${S.font} font-size="17" font-weight="700" fill="${S.accent}" text-anchor="middle">Current Streak</text>
+        <text x="${scx}" y="${scy + sr + 48}" ${S.font} font-size="11" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-        <text x="621" y="${sideNumY}"   ${S.font} font-size="27" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="621" y="${sideLabelY}" ${S.font} font-size="14" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="621" y="${sideNumY}"   ${S.font} font-size="25" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="621" y="${sideLabelY}" ${S.font} font-size="12" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
