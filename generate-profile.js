@@ -145,6 +145,7 @@ function fmtNum(n) {
     return n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n);
 }
 
+// Original github-readme-stats formula
 function calculateRank({ commits, prs, issues, stars, followers }) {
     const exponentialCdf = x => 1 - Math.pow(2, -x);
     const normalcdf = (mean, sigma, to) => {
@@ -161,15 +162,6 @@ function calculateRank({ commits, prs, issues, stars, followers }) {
         1 * exponentialCdf(followers / 10)
     ) / 11;
     return 100 - 100 * normalcdf(score, 1, 0.75);
-}
-
-function rankRingFill(percentile) {
-    const THRESHOLDS = [1, 85, 92, 96, 98, 99, 99.5, 99.8, 100];
-    const FILLS      = [0.92, 0.72, 0.57, 0.45, 0.35, 0.25, 0.18, 0.12, 0.08];
-    for (let i = 0; i < THRESHOLDS.length; i++) {
-        if (percentile <= THRESHOLDS[i]) return FILLS[i];
-    }
-    return FILLS[FILLS.length - 1];
 }
 
 function donut(langs, cx, cy, r) {
@@ -197,37 +189,34 @@ function langLegend(langs, x, startY, gap) {
     }).join("");
 }
 
-// Flame centered at (cx, cy), height ~22px, width ~20px
-function flame(cx, cy) {
-    return `
-        <path d="M${cx},${cy+5} C${cx-10},${cy+5} ${cx-14},${cy-1} ${cx-11},${cy-7} C${cx-9},${cy-12} ${cx-5},${cy-10} ${cx-5},${cy-15} C${cx-3},${cy-11} ${cx-1},${cy-13} ${cx},${cy-17} C${cx+1},${cy-13} ${cx+3},${cy-11} ${cx+5},${cy-15} C${cx+5},${cy-10} ${cx+9},${cy-12} ${cx+11},${cy-7} C${cx+14},${cy-1} ${cx+10},${cy+5} ${cx},${cy+5} Z" fill="#ff7b2c"/>
-        <path d="M${cx},${cy+1} C${cx-5},${cy+1} ${cx-7},${cy-2} ${cx-5},${cy-6} C${cx-4},${cy-9} ${cx-2},${cy-7} ${cx-2},${cy-11} C${cx-1},${cy-8} ${cx},${cy-10} ${cx},${cy-13} C${cx},${cy-10} ${cx+1},${cy-8} ${cx+2},${cy-11} C${cx+2},${cy-7} ${cx+4},${cy-9} ${cx+5},${cy-6} C${cx+7},${cy-2} ${cx+5},${cy+1} ${cx},${cy+1} Z" fill="#ffcc44"/>`;
-}
-
 function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPercentile) {
     const total = user.contributionsCollection.contributionCalendar.totalContributions;
-    const circ = 2 * Math.PI * 38;
-    const fill = rankRingFill(rankPercentile);
-    const ringFill = fill * circ;
-    const ringGap = circ - ringFill;
 
-    const donutSVG = donut(langs, 685, 119, 34);
+    // Rank ring: original formula, ring fill = (1 - percentile/100) * circumference
+    const rankCirc = 2 * Math.PI * 38;
+    const rankFill = (1 - rankPercentile / 100) * rankCirc;
+    const rankGap  = rankCirc - rankFill;
+
+    const donutSVG  = donut(langs, 685, 119, 34);
     const legendSVG = langLegend(langs, 506, 68, 22);
 
-    // Streak card: y=220, height=134, bottom=354
-    // SVG height=370
-    // Circle r=34, center cy=285
-    // Flame base: cy - r - 4 = 285-34-4=247, flame tip: 247-17=230
-    // Number: cy+8 = 293
-    // Label: cy+r+18 = 337
-    // Dates: cy+r+30 = 349
+    // Streak card: y=220, height=160, bottom=380. SVG height=396.
+    // Vertically center content in card:
+    // Content = circle(68px) + gap(6px) + label(11px) + gap(3px) + dates(10px) = 98px
+    // Card center = 220 + 80 = 300
+    // Content top = 300 - 49 = 251 → circle center scy = 251 + 34 = 285
     const scx = 380, scy = 285, sr = 34;
-    const flameY = scy - sr - 4;
 
-    return `<svg width="760" height="370" viewBox="0 0 760 370" xmlns="http://www.w3.org/2000/svg" role="img">
+    // Side sections: center at y=300, content = number(24px) + gap(5px) + label(11px) + gap(3px) + date(10px) = 53px
+    // Top = 300 - 26.5 ≈ 274 → number baseline ≈ 274 + 19 = 293
+    const sideNumY   = 293;
+    const sideLabelY = 311;
+    const sideDateY  = 324;
+
+    return `<svg width="760" height="396" viewBox="0 0 760 396" xmlns="http://www.w3.org/2000/svg" role="img">
         <title>S0x2-dev GitHub Stats</title>
 
-        <rect width="760" height="370" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
+        <rect width="760" height="396" rx="10" fill="${S.bg}" stroke="${S.border}" stroke-width="1"/>
 
         <rect x="16" y="16" width="454" height="188" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
         <text x="32" y="44" ${S.font} font-size="14" font-weight="600" fill="${S.accent}">S0x2-dev's GitHub Stats</text>
@@ -249,7 +238,7 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
 
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.border}" stroke-width="3"/>
         <circle cx="408" cy="112" r="38" fill="none" stroke="${S.accent}" stroke-width="3"
-            stroke-dasharray="${ringFill.toFixed(1)} ${ringGap.toFixed(1)}"
+            stroke-dasharray="${rankFill.toFixed(1)} ${rankGap.toFixed(1)}"
             stroke-dashoffset="0"
             transform="rotate(-90 408 112)"/>
         <text x="408" y="119" ${S.font} font-size="17" font-weight="700" fill="${S.text}" text-anchor="middle">A+</text>
@@ -259,23 +248,22 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
         ${legendSVG}
         ${donutSVG}
 
-        <rect x="16" y="220" width="728" height="134" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
+        <rect x="16" y="220" width="728" height="160" rx="8" fill="${S.bgCard}" stroke="${S.border}" stroke-width="0.5"/>
 
-        <text x="137" y="272" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
-        <text x="137" y="290" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
-        <text x="137" y="304" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
+        <text x="137" y="${sideNumY}"   ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${total.toLocaleString()}</text>
+        <text x="137" y="${sideLabelY}" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Total Contributions</text>
+        <text x="137" y="${sideDateY}"  ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">Apr 30, 2024 - Present</text>
 
-        <line x1="259" y1="230" x2="259" y2="346" stroke="${S.border}" stroke-width="0.5"/>
-        <line x1="501" y1="230" x2="501" y2="346" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="259" y1="232" x2="259" y2="372" stroke="${S.border}" stroke-width="0.5"/>
+        <line x1="501" y1="232" x2="501" y2="372" stroke="${S.border}" stroke-width="0.5"/>
 
         <circle cx="${scx}" cy="${scy}" r="${sr}" fill="none" stroke="${S.accent}" stroke-width="2.5"/>
-        ${flame(scx, flameY)}
-        <text x="${scx}" y="${scy + 9}" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
+        <text x="${scx}" y="${scy + 9}"       ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.current}</text>
         <text x="${scx}" y="${scy + sr + 18}" ${S.font} font-size="11" fill="${S.accent}" text-anchor="middle">Current Streak</text>
-        <text x="${scx}" y="${scy + sr + 30}" ${S.font} font-size="10" fill="${S.muted}" text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
+        <text x="${scx}" y="${scy + sr + 30}" ${S.font} font-size="10" fill="${S.muted}"  text-anchor="middle">${fmtDate(streak.startCurrent)} - ${fmtDate(streak.endCurrent)}</text>
 
-        <text x="621" y="272" ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
-        <text x="621" y="290" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
+        <text x="621" y="${sideNumY}"   ${S.font} font-size="24" font-weight="700" fill="${S.text}" text-anchor="middle">${streak.longest}</text>
+        <text x="621" y="${sideLabelY}" ${S.font} font-size="11" fill="${S.muted}" text-anchor="middle">Longest Streak</text>
     </svg>`;
 }
 
@@ -283,9 +271,9 @@ function generateSVG(user, streak, langs, stars, commits, prs, issues, rankPerce
     console.log("Fetching GitHub data...");
     const user = await fetchData();
 
-    const langs = topLangs(user.repositories.nodes);
+    const langs  = topLangs(user.repositories.nodes);
     const streak = calcStreak(user.contributionsCollection.contributionCalendar.weeks);
-    const stars = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
+    const stars  = user.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
 
     const commits =
         (user.y0?.totalCommitContributions ?? 0) +
