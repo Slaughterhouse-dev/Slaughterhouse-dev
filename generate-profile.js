@@ -91,12 +91,27 @@ function fetchSpotifyData() {
 }
 
 function readProfileViews() {
-    try {
-        const viewCount = parseInt(fs.readFileSync("profile-views.txt", "utf8").trim()) || 0;
-        return viewCount;
-    } catch (error) {
-        return 0;
-    }
+  return new Promise((resolve) => {
+    const request = https.request({
+      hostname: "komarev.com",
+      path: "/ghpvc/?username=S0x2-dev&format=true",
+      method: "GET",
+      headers: { "User-Agent": "profile-card-generator" },
+    }, (response) => {
+      let data = "";
+      response.on("data", (chunk) => (data += chunk));
+      response.on("end", () => {
+        try {
+          const countMatch = data.match(/(\d+)/);
+          resolve(countMatch ? parseInt(countMatch[1]) : 0);
+        } catch {
+          resolve(0);
+        }
+      });
+    });
+    request.on("error", () => resolve(0));
+    request.end();
+  });
 }
 
 async function fetchGitHubData() {
@@ -435,7 +450,7 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
     const spotifyData = await fetchSpotifyData();
 
     console.log("Reading profile views...");
-    const profileViewCount = readProfileViews();
+    const profileViewCount = await readProfileViews();
 
     const topLanguages = getTopLanguages(gitHubUser.repositories.nodes);
     const streakData = calculateStreak(gitHubUser.contributionsCollection.contributionCalendar.weeks);
