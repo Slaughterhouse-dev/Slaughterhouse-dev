@@ -283,60 +283,61 @@ function createFlame(centerX, centerY, size, color, ringStroke) {
 }
 
 function createWaveAnimation(color) {
-    const points = [];
-    const amplitude = 3;
-    const frequency = 0.15;
-    const segments = 180;
+  const cardX = 16, cardY = 220, cardW = 728, cardH = 220;
+  const perimeter = 2 * (cardW + cardH);
+  const segments = 400;
+  const amplitude = 3;
+  const points = [];
 
-    for (let i = 0; i < segments; i++) {
-        const angle = (i / segments) * Math.PI * 2;
-        const baseX = 380 + 150 * Math.cos(angle);
-        const baseY = 308 + 150 * Math.sin(angle);
-        const offset = amplitude * Math.sin(angle * frequency);
-        const x = baseX + offset * Math.cos(angle);
-        const y = baseY + offset * Math.sin(angle);
-        points.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+  for (let i = 0; i <= segments; i++) {
+    const t = (i / segments) * perimeter;
+    let px, py, nx, ny;
+
+    if (t < cardW) {
+      px = cardX + t; py = cardY; nx = 0; ny = -1;
+    } else if (t < cardW + cardH) {
+      px = cardX + cardW; py = cardY + (t - cardW); nx = 1; ny = 0;
+    } else if (t < 2 * cardW + cardH) {
+      px = cardX + cardW - (t - cardW - cardH); py = cardY + cardH; nx = 0; ny = 1;
+    } else {
+      px = cardX; py = cardY + cardH - (t - 2 * cardW - cardH); nx = -1; ny = 0;
     }
 
-    return `
+    const wave = amplitude * Math.sin((i / segments) * Math.PI * 30);
+    points.push(`${(px + nx * wave).toFixed(1)},${(py + ny * wave).toFixed(1)}`);
+  }
+
+  return `
     <style>
-        @keyframes wave {
-            0% { 
-                transform: rotate(0deg); 
-            }
-            100% { 
-                transform: rotate(360deg);
-            }
-        }
-        .wave-path { 
-            animation: wave 20s linear infinite;
-            transform-origin: 380px 308px; 
-        }
+      @keyframes waveDash {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: -${perimeter}; }
+      }
+      .wave-path { stroke-dasharray: 6 3; animation: waveDash 6s linear infinite; }
     </style>
-    <polyline points="${points.join(" ")}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.4" class="wave-path"/>`;
+    <polyline points="${points.join(" ")}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.5" class="wave-path"/>`;
 }
 
 function createSpotifyCard(trackName, trackColor, viewCount) {
-    const cardX = 32;
-    const cardY = 244;
-    const viewsX = 690;
-    const viewsY = 244;
+  const leftX = 32;
+  const rowY = 415;
+  const viewsX = 710;
 
-    if (!trackName) {
-        return `
-            <text x="${cardX}" y="${cardY}" ${theme.font} font-size="12" fill="${theme.muted}">🎵 Not playing</text>
-            <text x="${viewsX}" y="${viewsY}" ${theme.font} font-size="14" font-weight="600" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
-            <text x="${viewsX}" y="${viewsY + 16}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>
-        `;
-    }
-
+  if (!trackName) {
     return `
-        <rect x="${cardX}" y="${cardY - 12}" width="300" height="28" rx="4" fill="${trackColor}22"/>
-        <circle cx="${cardX + 8}" cy="${cardY + 2}" r="3" fill="${trackColor}"/>
-        <text x="${cardX + 18}" y="${cardY + 6}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${trackName}</text>
-        <text x="${viewsX}" y="${viewsY}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
-        <text x="${viewsX}" y="${viewsY + 16}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>
-    `;
+      <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">🎵 Not playing</text>
+      <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
+      <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
+  }
+
+  return `
+    <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+    <rect x="${leftX}" y="${rowY - 14}" width="320" height="26" rx="4" fill="${trackColor}22"/>
+    <circle cx="${leftX + 9}" cy="${rowY}" r="4" fill="${trackColor}"/>
+    <text x="${leftX + 20}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${trackName}</text>
+    <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
+    <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
 }
 
 function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify, viewCount) {
@@ -361,7 +362,7 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
     const sideLabelY = 311;
     const sideDateY = 324;
 
-    return `<svg width="760" height="396" viewBox="0 0 760 396" xmlns="http://www.w3.org/2000/svg" role="img">
+    return `<svg width="760" height="456" viewBox="0 0 760 456" xmlns="http://www.w3.org/2000/svg" role="img">
     <title>S0x2-dev GitHub Stats</title>
 
     <defs>
@@ -403,7 +404,7 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
     ${languageLegend}
     ${donutChart}
 
-    <rect x="16" y="220" width="728" height="160" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
+    <rect x="16" y="220" width="728" height="220" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
 
     <text x="137" y="${sideNumberY}" ${theme.font} font-size="25" font-weight="700" fill="${theme.text}" text-anchor="middle">${totalContributions.toLocaleString()}</text>
     <text x="137" y="${sideLabelY}" ${theme.font} font-size="12" fill="${theme.muted}" text-anchor="middle">Total Contributions</text>
