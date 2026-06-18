@@ -104,14 +104,20 @@ async function fetchGitHubData() {
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
 
-    const yearFragments = [{ year: currentYear, key: "current" }, { year: previousYear, key: "previous" }].map(({ year, key }) => ` ${key}: contributionsCollection(from: "${year}-01-01T00:00:00Z"to: "${year}-12-31T23:59:59Z") {
-          totalCommitContributions
-          totalPullRequestContributions
-          totalIssueContributions
-          restrictedContributionsCount
-        }
-    `,
-    ).join("");
+const yearFragments = [
+  { year: currentYear, key: "current" },
+  { year: previousYear, key: "previous" },
+].map(({ year, key }) => `
+  ${key}: contributionsCollection(
+    from: "${year}-01-01T00:00:00Z"
+    to: "${year}-12-31T23:59:59Z"
+  ) {
+    totalCommitContributions
+    totalPullRequestContributions
+    totalIssueContributions
+    restrictedContributionsCount
+  }
+`).join("");
 
     const { data } = await executeGraphQL(`
         query($login: String!) {
@@ -264,17 +270,17 @@ function createLanguageLegend(languages, posX, startY, gap) {
 }
 
 function createFlame(centerX, centerY, size, color, ringStroke) {
-    const scale = size / 24;
-    const translateX = centerX - 12 * scale;
-    const translateY = centerY - 12 * scale;
-    const strokeWidth = (ringStroke / scale).toFixed(2);
+  const scale = size / 24;
+  const translateX = centerX - 12 * scale;
+  const translateY = centerY - 12 * scale;
+  const strokeWidth = (ringStroke / scale).toFixed(2);
 
-    return `
+  return `
     <g transform="translate(${translateX} ${translateY}) scale(${scale})">
-        <path d="M 19.48 12.35 c -1.57 -4.08 -7.16 -4.3 -5.81 -10.23 c .1 -.44 -.37 -.78 -.75 -.55 C 9.29 3.71 6.68 8 8.87 13.62 c .18 .46 -.36 .89 -.75 .59 c -1.81 -1.37 -2 -3.34 -1.84 -4.75 c .06 -.52 -.62 -.77 -.91 -.34 C 4.69 10.16 4 11.84 4 14.37 c .38 5.6 5.11 7.32 6.81 7.54 c 2.43 .31 5.06 -.14 6.95 -1.87 c 2.08 -1.93 2.84 -5.01 1.72 -7.69 z" fill="none"stroke="${color}"stroke-width="${strokeWidth}"stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M 19.48 12.35 c -1.57 -4.08 -7.16 -4.3 -5.81 -10.23 c .1 -.44 -.37 -.78 -.75 -.55 C 9.29 3.71 6.68 8 8.87 13.62 c .18 .46 -.36 .89 -.75 .59 c -1.81 -1.37 -2 -3.34 -1.84 -4.75 c .06 -.52 -.62 -.77 -.91 -.34 C 4.69 10.16 4 11.84 4 14.37 c .38 5.6 5.11 7.32 6.81 7.54 c 2.43 .31 5.06 -.14 6.95 -1.87 c 2.08 -1.93 2.84 -5.01 1.72 -7.69 z"
+            fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round"/>
     </g>`;
 }
-
 
 function createWaveAnimation(color) {
     const points = [];
