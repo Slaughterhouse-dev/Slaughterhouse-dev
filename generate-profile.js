@@ -66,16 +66,16 @@ function fetchSpotifyData() {
                     const trackName = trackMatch ? trackMatch[1].trim() : null;
                     const colorMatch = data.match(/style="[^"]*background.*?([#a-f0-9]{6})/i);
                     const trackColor = colorMatch ? "#" + colorMatch[1] : theme.accent;
-                    resolve({ 
-                        trackName, 
-                        trackColor, 
-                        isPlaying: !!trackName 
+                    resolve({
+                        trackName,
+                        trackColor,
+                        isPlaying: !!trackName
                     });
                 } catch (error) {
-                    resolve({ 
-                        trackName: null, 
-                        trackColor: theme.accent, 
-                        isPlaying: false 
+                    resolve({
+                        trackName: null,
+                        trackColor: theme.accent,
+                        isPlaying: false
                     });
                 }
             });
@@ -104,7 +104,7 @@ async function fetchGitHubData() {
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
 
-    const yearFragments = [{ year: currentYear,  key: "current" }, { year: previousYear, key: "previous" }].map(({ year, key }) => ` ${key}: contributionsCollection(from: "${year}-01-01T00:00:00Z"to: "${year}-12-31T23:59:59Z") {
+    const yearFragments = [{ year: currentYear, key: "current" }, { year: previousYear, key: "previous" }].map(({ year, key }) => ` ${key}: contributionsCollection(from: "${year}-01-01T00:00:00Z"to: "${year}-12-31T23:59:59Z") {
           totalCommitContributions
           totalPullRequestContributions
           totalIssueContributions
@@ -142,8 +142,8 @@ async function fetchGitHubData() {
             ) { totalCount }
           }
         }
-    `, { 
-        login: username 
+    `, {
+        login: username
     });
     return data.user;
 }
@@ -275,6 +275,7 @@ function createFlame(centerX, centerY, size, color, ringStroke) {
     </g>`;
 }
 
+
 function createWaveAnimation(color) {
     const points = [];
     const amplitude = 3;
@@ -285,7 +286,7 @@ function createWaveAnimation(color) {
         const angle = (i / segments) * Math.PI * 2;
         const baseX = 380 + 150 * Math.cos(angle);
         const baseY = 308 + 150 * Math.sin(angle);
-        const offset = amplitude * Math.sin(angle * frequency + Date.now() / 1000);
+        const offset = amplitude * Math.sin(angle * frequency);
         const x = baseX + offset * Math.cos(angle);
         const y = baseY + offset * Math.sin(angle);
         points.push(`${x.toFixed(1)},${y.toFixed(1)}`);
