@@ -30,7 +30,7 @@
 
     <circle cx="408" cy="112" r="38" fill="none" stroke="#212022" stroke-width="3"/>
     <circle cx="408" cy="112" r="38" fill="none" stroke="#91a1f1" stroke-width="3"
-      stroke-dasharray="164.4 74.4"
+      stroke-dasharray="164.1 74.7"
       stroke-dashoffset="0"
       transform="rotate(-90 408 112)"/>
     <text x="408" y="118" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#c8c8c8" text-anchor="middle">A+</text>
