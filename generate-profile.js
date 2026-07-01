@@ -4,6 +4,7 @@ const fs = require("fs");
 const username = "S0x2-dev";
 const token = process.env.GITHUB_TOKEN;
 const spotifyUserId = "31leep2d5rpspzgszzi6glolhul4";
+const spotifyGreen = "#1db954";
 
 const theme = {
     background: "#171517",
@@ -14,6 +15,15 @@ const theme = {
     muted: "#8c8c8c",
     font: `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`,
 };
+
+function escapeXml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+}
 
 function executeGraphQL(query, variables) {
     return new Promise((resolve, reject) => {
@@ -48,8 +58,20 @@ function executeGraphQL(query, variables) {
     });
 }
 
+function decodeEntities(text) {
+    return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+}
+
 function fetchSpotifyData() {
     return new Promise((resolve) => {
+        const fallback = { trackName: null, trackColor: spotifyGreen, isPlaying: false };
         const options = {
             hostname: "spotify-github-profile.kittinanx.com",
             path: `/api/view?uid=${spotifyUserId}`,
@@ -62,30 +84,38 @@ function fetchSpotifyData() {
             response.on("data", (chunk) => (data += chunk));
             response.on("end", () => {
                 try {
-                    const trackMatch = data.match(/<h2[^>]*>([^<]+)<\/h2>/);
-                    const trackName = trackMatch ? trackMatch[1].trim() : null;
-                    const colorMatch = data.match(/style="[^"]*background.*?([#a-f0-9]{6})/i);
-                    const trackColor = colorMatch ? "#" + colorMatch[1] : theme.accent;
-                    resolve({
-                        trackName,
-                        trackColor,
-                        isPlaying: !!trackName
-                    });
+                    // The endpoint returns an SVG whose <foreignObject> holds the
+                    // now-playing markup: <div class="song">..</div>, <div class="artist">..</div>.
+                    // When idle it renders <div class="not-play">..</div> instead.
+                    if (/class="not-play"/.test(data)) {
+                        resolve(fallback);
+                        return;
+                    }
+
+                    const grab = (className) => {
+                        const match = data.match(
+                            new RegExp(`class="${className}"[^>]*>([^<]+)<`)
+                        );
+                        return match ? decodeEntities(match[1]).trim() : null;
+                    };
+
+                    const song = grab("song");
+                    const artist = grab("artist");
+
+                    if (!song) {
+                        resolve(fallback);
+                        return;
+                    }
+
+                    const trackName = artist ? `${song} — ${artist}` : song;
+                    resolve({ trackName, trackColor: spotifyGreen, isPlaying: true });
                 } catch (error) {
-                    resolve({
-                        trackName: null,
-                        trackColor: theme.accent,
-                        isPlaying: false
-                    });
+                    resolve(fallback);
                 }
             });
         });
 
-        request.on("error", () => {
-            resolve({ trackName: null, trackColor: theme.accent, isPlaying: false });
-        });
-
-        request.write("");
+        request.on("error", () => resolve(fallback));
         request.end();
     });
 }
@@ -94,7 +124,7 @@ function readProfileViews() {
   return new Promise((resolve) => {
     const request = https.request({
       hostname: "komarev.com",
-      path: "/ghpvc/?username=S0x2-dev&format=true",
+      path: "/ghpvc/?username=S0x2-dev&format=true&base=0",
       method: "GET",
       headers: { "User-Agent": "profile-card-generator" },
     }, (response) => {
@@ -102,8 +132,14 @@ function readProfileViews() {
       response.on("data", (chunk) => (data += chunk));
       response.on("end", () => {
         try {
-          const countMatch = data.match(/(\d+)/);
-          resolve(countMatch ? parseInt(countMatch[1]) : 0);
+          // komarev returns an SVG badge. The count lives in the trailing
+          // <text> elements — the leading numbers are the SVG's own
+          // width/height attributes, so grab the last numeric <text>.
+          const textValues = [...data.matchAll(/<text[^>]*>([^<]*)<\/text>/g)]
+            .map((match) => match[1].replace(/[,\s]/g, ""))
+            .filter((value) => /^\d+$/.test(value));
+          const count = textValues.length ? parseInt(textValues[textValues.length - 1], 10) : 0;
+          resolve(count);
         } catch {
           resolve(0);
         }
@@ -279,7 +315,7 @@ function createLanguageLegend(languages, posX, startY, gap) {
         const y = startY + index * gap;
         return `
             <circle cx="${posX}" cy="${y - 4}" r="4" fill="${color}"/>
-            <text x="${posX + 11}" y="${y}" ${theme.font} font-size="12" fill="${theme.text}">${name} <tspan fill="${theme.muted}">${percentage}%</tspan></text>
+            <text x="${posX + 11}" y="${y}" ${theme.font} font-size="12" fill="${theme.text}">${escapeXml(name)} <tspan fill="${theme.muted}">${percentage}%</tspan></text>
         `;
     }).join("");
 }
@@ -338,21 +374,27 @@ function createSpotifyCard(trackName, trackColor, viewCount) {
   const rowY = 415;
   const viewsX = 710;
 
+  const viewsBlock = `
+    <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
+    <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
+
   if (!trackName) {
     return `
       <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">🎵 Not playing</text>
-      <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
-      <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
+      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
+      ${viewsBlock}`;
   }
+
+  const maxLength = 42;
+  const label = trackName.length > maxLength ? trackName.slice(0, maxLength - 1).trimEnd() + "…" : trackName;
+  const boxWidth = Math.min(340, 28 + label.length * 6.6);
 
   return `
     <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-    <rect x="${leftX}" y="${rowY - 14}" width="320" height="26" rx="4" fill="${trackColor}22"/>
-    <circle cx="${leftX + 9}" cy="${rowY}" r="4" fill="${trackColor}"/>
-    <text x="${leftX + 20}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${trackName}</text>
-    <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
-    <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
+    <rect x="${leftX}" y="${rowY - 14}" width="${boxWidth.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
+    <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
+    <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>
+    ${viewsBlock}`;
 }
 
 function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify, viewCount) {
