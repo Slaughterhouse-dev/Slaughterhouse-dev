@@ -120,36 +120,6 @@ function fetchSpotifyData() {
     });
 }
 
-function readProfileViews() {
-  return new Promise((resolve) => {
-    const request = https.request({
-      hostname: "komarev.com",
-      path: "/ghpvc/?username=S0x2-dev&format=true&base=0",
-      method: "GET",
-      headers: { "User-Agent": "profile-card-generator" },
-    }, (response) => {
-      let data = "";
-      response.on("data", (chunk) => (data += chunk));
-      response.on("end", () => {
-        try {
-          // komarev returns an SVG badge. The count lives in the trailing
-          // <text> elements — the leading numbers are the SVG's own
-          // width/height attributes, so grab the last numeric <text>.
-          const textValues = [...data.matchAll(/<text[^>]*>([^<]*)<\/text>/g)]
-            .map((match) => match[1].replace(/[,\s]/g, ""))
-            .filter((value) => /^\d+$/.test(value));
-          const count = textValues.length ? parseInt(textValues[textValues.length - 1], 10) : 0;
-          resolve(count);
-        } catch {
-          resolve(0);
-        }
-      });
-    });
-    request.on("error", () => resolve(0));
-    request.end();
-  });
-}
-
 async function fetchGitHubData() {
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -333,52 +303,14 @@ function createFlame(centerX, centerY, size, color, ringStroke) {
     </g>`;
 }
 
-function roundedRectPath(x, y, width, height, radius, side) {
-  const r = Math.min(radius, height / 2, width / 2);
-  if (side === "left") {
-    return `M${x + r},${y} H${x + width} V${y + height} H${x + r} `
-      + `Q${x},${y + height} ${x},${y + height - r} V${y + r} Q${x},${y} ${x + r},${y} Z`;
-  }
-  // right
-  return `M${x},${y} H${x + width - r} Q${x + width},${y} ${x + width},${y + r} `
-    + `V${y + height - r} Q${x + width},${y + height} ${x + width - r},${y + height} H${x} Z`;
-}
-
-function createViewsBadge(viewCount, rightX, centerY) {
-  const height = 34;
-  const padding = 15;
-  const fontSize = 14;
-  const labelText = "Profile Views";
-  const countText = formatNumber(viewCount);
-
-  // Approximate text widths at the badge font-size (avg glyph ~0.53em, digits a touch wider).
-  const labelWidth = Math.round(labelText.length * fontSize * 0.54) + padding * 2;
-  const countWidth = Math.round(countText.length * fontSize * 0.62) + padding * 2;
-  const totalWidth = labelWidth + countWidth;
-
-  const x = rightX - totalWidth;
-  const y = centerY - height / 2;
-  const textY = centerY + fontSize * 0.35;
-
-  return `
-    <path d="${roundedRectPath(x, y, labelWidth, height, 6, "left")}" fill="${theme.accent}"/>
-    <path d="${roundedRectPath(x + labelWidth, y, countWidth, height, 6, "right")}" fill="${theme.background}" stroke="${theme.border}" stroke-width="0.5"/>
-    <text x="${x + labelWidth / 2}" y="${textY}" ${theme.font} font-size="${fontSize}" font-weight="600" fill="${theme.background}" text-anchor="middle">${labelText}</text>
-    <text x="${x + labelWidth + countWidth / 2}" y="${textY}" ${theme.font} font-size="${fontSize}" font-weight="700" fill="${theme.text}" text-anchor="middle">${countText}</text>`;
-}
-
-function createSpotifyCard(trackName, trackColor, viewCount) {
+function createSpotifyCard(trackName, trackColor) {
   const leftX = 32;
   const rowY = 415;
-  const viewsRightX = 728;
-
-  const viewsBadge = createViewsBadge(viewCount, viewsRightX, rowY - 4);
 
   if (!trackName) {
     return `
       <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
-      ${viewsBadge}`;
+      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>`;
   }
 
   const maxLength = 42;
@@ -389,11 +321,10 @@ function createSpotifyCard(trackName, trackColor, viewCount) {
     <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
     <rect x="${leftX}" y="${rowY - 14}" width="${boxWidth.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
     <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
-    <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>
-    ${viewsBadge}`;
+    <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>`;
 }
 
-function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify, viewCount) {
+function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify) {
     const totalContributions = userData.contributionsCollection.contributionCalendar.totalContributions;
 
     const rankCircumference = 2 * Math.PI * 38;
@@ -474,7 +405,7 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
     <text x="621" y="${sideNumberY}" ${theme.font} font-size="25" font-weight="700" fill="${theme.text}" text-anchor="middle">${streakInfo.longest}</text>
     <text x="621" y="${sideLabelY}" ${theme.font} font-size="12" fill="${theme.muted}" text-anchor="middle">Longest Streak</text>
 
-    ${createSpotifyCard(spotify.trackName, spotify.trackColor, viewCount)}
+    ${createSpotifyCard(spotify.trackName, spotify.trackColor)}
   </svg>`;
 }
 
@@ -484,9 +415,6 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
 
     console.log("Fetching Spotify data...");
     const spotifyData = await fetchSpotifyData();
-
-    console.log("Reading profile views...");
-    const profileViewCount = await readProfileViews();
 
     const topLanguages = getTopLanguages(gitHubUser.repositories.nodes);
     const streakData = calculateStreak(gitHubUser.contributionsCollection.contributionCalendar.weeks);
@@ -516,7 +444,6 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
         totalIssues,
         rankPercentile,
         spotifyData,
-        profileViewCount,
     );
 
     fs.writeFileSync("profile-card.svg", svgOutput);
