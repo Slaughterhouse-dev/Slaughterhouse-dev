@@ -345,25 +345,26 @@ function roundedRectPath(x, y, width, height, radius, side) {
 }
 
 function createViewsBadge(viewCount, rightX, centerY) {
-  const height = 24;
-  const padding = 11;
+  const height = 34;
+  const padding = 15;
+  const fontSize = 14;
   const labelText = "Profile Views";
   const countText = formatNumber(viewCount);
 
-  // Approximate text widths at font-size 11 (avg glyph ~6px, digits a touch wider).
-  const labelWidth = Math.round(labelText.length * 6.1) + padding * 2;
-  const countWidth = Math.round(countText.length * 7) + padding * 2;
+  // Approximate text widths at the badge font-size (avg glyph ~0.53em, digits a touch wider).
+  const labelWidth = Math.round(labelText.length * fontSize * 0.54) + padding * 2;
+  const countWidth = Math.round(countText.length * fontSize * 0.62) + padding * 2;
   const totalWidth = labelWidth + countWidth;
 
   const x = rightX - totalWidth;
   const y = centerY - height / 2;
-  const textY = centerY + 4;
+  const textY = centerY + fontSize * 0.35;
 
   return `
-    <path d="${roundedRectPath(x, y, labelWidth, height, 4, "left")}" fill="${theme.accent}"/>
-    <path d="${roundedRectPath(x + labelWidth, y, countWidth, height, 4, "right")}" fill="${theme.background}" stroke="${theme.border}" stroke-width="0.5"/>
-    <text x="${x + labelWidth / 2}" y="${textY}" ${theme.font} font-size="11" font-weight="600" fill="${theme.background}" text-anchor="middle">${labelText}</text>
-    <text x="${x + labelWidth + countWidth / 2}" y="${textY}" ${theme.font} font-size="11" font-weight="700" fill="${theme.text}" text-anchor="middle">${countText}</text>`;
+    <path d="${roundedRectPath(x, y, labelWidth, height, 6, "left")}" fill="${theme.accent}"/>
+    <path d="${roundedRectPath(x + labelWidth, y, countWidth, height, 6, "right")}" fill="${theme.background}" stroke="${theme.border}" stroke-width="0.5"/>
+    <text x="${x + labelWidth / 2}" y="${textY}" ${theme.font} font-size="${fontSize}" font-weight="600" fill="${theme.background}" text-anchor="middle">${labelText}</text>
+    <text x="${x + labelWidth + countWidth / 2}" y="${textY}" ${theme.font} font-size="${fontSize}" font-weight="700" fill="${theme.text}" text-anchor="middle">${countText}</text>`;
 }
 
 function createSpotifyCard(trackName, trackColor, viewCount) {
