@@ -102,7 +102,7 @@
 
     <rect x="16" y="220" width="728" height="220" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
 
-    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,405</text>
+    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,406</text>
     <text x="137" y="311" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
     <text x="137" y="324" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 - Present</text>
 
@@ -125,9 +125,4 @@
     
       <line x1="16" y1="390" x2="744" y2="390" stroke="#212022" stroke-width="0.5"/>
       <text x="32" y="415" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c">♫ Not playing</text>
-      
-    <path d="M559,394 H681 V428 H559 Q553,428 553,422 V400 Q553,394 559,394 Z" fill="#91a1f1"/>
-    <path d="M681,394 H722 Q728,394 728,400 V422 Q728,428 722,428 H681 Z" fill="#171517" stroke="#212022" stroke-width="0.5"/>
-    <text x="617" y="415.9" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="600" fill="#171517" text-anchor="middle">Profile Views</text>
-    <text x="704.5" y="415.9" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" font-weight="700" fill="#c8c8c8" text-anchor="middle">10</text>
   </svg>
