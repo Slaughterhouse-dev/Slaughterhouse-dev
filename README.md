@@ -13,5 +13,6 @@
 </td>
 </tr>
 </table>
-<img src="https://komarev.com/ghpvc/?username=S0x2-dev&label=views&color=171517&style=flat" alt="" width="1" height="1" />
+<br />
+<img src="https://komarev.com/ghpvc/?username=S0x2-dev&label=Profile+Views&color=91a1f1&style=flat" alt="Profile Views" />
 </div>
