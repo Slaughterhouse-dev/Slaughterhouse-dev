@@ -419,12 +419,12 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
 
     <defs>
       <mask id="streak-ring-cut">
-        <rect width="760" height="396" fill="white"/>
+        <rect width="760" height="456" fill="white"/>
         <rect x="${streakCenterX - 6}" y="${streakCenterY - streakRadius - 2}" width="12" height="5" fill="black"/>
       </mask>
     </defs>
 
-    <rect width="760" height="396" rx="10" fill="${theme.background}" stroke="${theme.border}" stroke-width="1"/>
+    <rect width="760" height="456" rx="10" fill="${theme.background}" stroke="${theme.border}" stroke-width="1"/>
 
     <rect x="16" y="16" width="454" height="188" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
     <text x="32" y="44" ${theme.font} font-size="15" font-weight="600" fill="${theme.accent}">S0x2-dev's GitHub Stats</text>
