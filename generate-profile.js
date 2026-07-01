@@ -333,56 +333,51 @@ function createFlame(centerX, centerY, size, color, ringStroke) {
     </g>`;
 }
 
-function createWaveAnimation(color) {
-  const cardX = 16, cardY = 220, cardW = 728, cardH = 220;
-  const perimeter = 2 * (cardW + cardH);
-  const segments = 400;
-  const amplitude = 3;
-  const points = [];
-
-  for (let i = 0; i <= segments; i++) {
-    const t = (i / segments) * perimeter;
-    let px, py, nx, ny;
-
-    if (t < cardW) {
-      px = cardX + t; py = cardY; nx = 0; ny = -1;
-    } else if (t < cardW + cardH) {
-      px = cardX + cardW; py = cardY + (t - cardW); nx = 1; ny = 0;
-    } else if (t < 2 * cardW + cardH) {
-      px = cardX + cardW - (t - cardW - cardH); py = cardY + cardH; nx = 0; ny = 1;
-    } else {
-      px = cardX; py = cardY + cardH - (t - 2 * cardW - cardH); nx = -1; ny = 0;
-    }
-
-    const wave = amplitude * Math.sin((i / segments) * Math.PI * 30);
-    points.push(`${(px + nx * wave).toFixed(1)},${(py + ny * wave).toFixed(1)}`);
+function roundedRectPath(x, y, width, height, radius, side) {
+  const r = Math.min(radius, height / 2, width / 2);
+  if (side === "left") {
+    return `M${x + r},${y} H${x + width} V${y + height} H${x + r} `
+      + `Q${x},${y + height} ${x},${y + height - r} V${y + r} Q${x},${y} ${x + r},${y} Z`;
   }
+  // right
+  return `M${x},${y} H${x + width - r} Q${x + width},${y} ${x + width},${y + r} `
+    + `V${y + height - r} Q${x + width},${y + height} ${x + width - r},${y + height} H${x} Z`;
+}
+
+function createViewsBadge(viewCount, rightX, centerY) {
+  const height = 24;
+  const padding = 11;
+  const labelText = "Profile Views";
+  const countText = formatNumber(viewCount);
+
+  // Approximate text widths at font-size 11 (avg glyph ~6px, digits a touch wider).
+  const labelWidth = Math.round(labelText.length * 6.1) + padding * 2;
+  const countWidth = Math.round(countText.length * 7) + padding * 2;
+  const totalWidth = labelWidth + countWidth;
+
+  const x = rightX - totalWidth;
+  const y = centerY - height / 2;
+  const textY = centerY + 4;
 
   return `
-    <style>
-      @keyframes waveDash {
-        0% { stroke-dashoffset: 0; }
-        100% { stroke-dashoffset: -${perimeter}; }
-      }
-      .wave-path { stroke-dasharray: 6 3; animation: waveDash 6s linear infinite; }
-    </style>
-    <polyline points="${points.join(" ")}" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.5" class="wave-path"/>`;
+    <path d="${roundedRectPath(x, y, labelWidth, height, 4, "left")}" fill="${theme.accent}"/>
+    <path d="${roundedRectPath(x + labelWidth, y, countWidth, height, 4, "right")}" fill="${theme.background}" stroke="${theme.border}" stroke-width="0.5"/>
+    <text x="${x + labelWidth / 2}" y="${textY}" ${theme.font} font-size="11" font-weight="600" fill="${theme.background}" text-anchor="middle">${labelText}</text>
+    <text x="${x + labelWidth + countWidth / 2}" y="${textY}" ${theme.font} font-size="11" font-weight="700" fill="${theme.text}" text-anchor="middle">${countText}</text>`;
 }
 
 function createSpotifyCard(trackName, trackColor, viewCount) {
   const leftX = 32;
   const rowY = 415;
-  const viewsX = 710;
+  const viewsRightX = 728;
 
-  const viewsBlock = `
-    <text x="${viewsX}" y="${rowY - 8}" ${theme.font} font-size="20" font-weight="700" fill="${theme.text}" text-anchor="end">${formatNumber(viewCount)}</text>
-    <text x="${viewsX}" y="${rowY + 10}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="end">Profile Views</text>`;
+  const viewsBadge = createViewsBadge(viewCount, viewsRightX, rowY - 4);
 
   if (!trackName) {
     return `
       <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
       <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
-      ${viewsBlock}`;
+      ${viewsBadge}`;
   }
 
   const maxLength = 42;
@@ -394,7 +389,7 @@ function createSpotifyCard(trackName, trackColor, viewCount) {
     <rect x="${leftX}" y="${rowY - 14}" width="${boxWidth.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
     <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
     <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>
-    ${viewsBlock}`;
+    ${viewsBadge}`;
 }
 
 function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify, viewCount) {
@@ -413,7 +408,6 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
     const streakRingStroke = 2.5;
     const flameSize = 20;
     const flameSVG = createFlame(streakCenterX, streakCenterY - streakRadius - 1, flameSize, theme.accent, streakRingStroke);
-    const waveSVG = createWaveAnimation(spotify.trackColor || theme.accent);
 
     const sideNumberY = 293;
     const sideLabelY = 311;
@@ -472,7 +466,6 @@ function generateSVG(userData, streakInfo, languages, starCount, commitCount, pr
 
     <circle cx="${streakCenterX}" cy="${streakCenterY}" r="${streakRadius}" fill="none" stroke="${theme.accent}" stroke-width="${streakRingStroke}" mask="url(#streak-ring-cut)"/>
     ${flameSVG}
-    ${waveSVG}
     <text x="${streakCenterX}" y="${streakCenterY + 9}" ${theme.font} font-size="25" font-weight="700" fill="${theme.text}" text-anchor="middle">${streakInfo.current}</text>
     <text x="${streakCenterX}" y="${streakCenterY + streakRadius + 30}" ${theme.font} font-size="17" font-weight="700" fill="${theme.accent}" text-anchor="middle">Current Streak</text>
     <text x="${streakCenterX}" y="${streakCenterY + streakRadius + 48}" ${theme.font} font-size="11" fill="${theme.muted}" text-anchor="middle">${formatDate(streakInfo.startDate)} - ${formatDate(streakInfo.endDate)}</text>
