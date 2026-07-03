@@ -97,6 +97,7 @@ async function fetchGitHubData(token) {
         ) {
             totalCommitContributions totalPullRequestContributions
             totalIssueContributions  restrictedContributionsCount
+            totalPullRequestReviewContributions
         }
     `).join("");
 
@@ -214,16 +215,35 @@ function getTopLanguages(repos) {
     }));
 }
 
-function calculateRank({ commits, pullRequests, issues, stars, followers }) {
-    const eCdf = (x) => 1 - Math.pow(2, -x);
-    const nCdf = (mean, sigma, value) => {
-        const z = (value - mean) / Math.sqrt(2 * sigma * sigma);
-        const t = 1 / (1 + 0.3275911 * Math.abs(z));
-        const erf = 1 - (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t) * Math.exp(-z * z);
-        return 0.5 * (1 + (z >= 0 ? erf : -erf));
-    };
-    const score = (2 * eCdf(commits / 250) + 3 * eCdf(pullRequests / 50) + eCdf(issues / 25) + 4 * eCdf(stars / 50) + eCdf(followers / 10)) / 11;
-    return 100 - 100 * nCdf(score, 1, 0.75);
+// Mirrors github-readme-stats' rank algorithm (MIT).
+// Returns { level: "S"|"A+"|... , percentile } where a lower percentile is better.
+function calculateRank({ commits, pullRequests, issues, reviews, stars, followers }) {
+    const expCdf = (x) => 1 - Math.pow(2, -x);
+    const logNormalCdf = (x) => x / (1 + x);
+
+    const COMMITS_MEDIAN = 250, COMMITS_WEIGHT = 2;
+    const PRS_MEDIAN = 50, PRS_WEIGHT = 3;
+    const ISSUES_MEDIAN = 25, ISSUES_WEIGHT = 1;
+    const REVIEWS_MEDIAN = 2, REVIEWS_WEIGHT = 1;
+    const STARS_MEDIAN = 50, STARS_WEIGHT = 4;
+    const FOLLOWERS_MEDIAN = 10, FOLLOWERS_WEIGHT = 1;
+    const TOTAL_WEIGHT = COMMITS_WEIGHT + PRS_WEIGHT + ISSUES_WEIGHT + REVIEWS_WEIGHT + STARS_WEIGHT + FOLLOWERS_WEIGHT;
+
+    const THRESHOLDS = [1, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100];
+    const LEVELS = ["S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C"];
+
+    const rank = 1 - (
+        COMMITS_WEIGHT * expCdf(commits / COMMITS_MEDIAN) +
+        PRS_WEIGHT * expCdf(pullRequests / PRS_MEDIAN) +
+        ISSUES_WEIGHT * expCdf(issues / ISSUES_MEDIAN) +
+        REVIEWS_WEIGHT * expCdf(reviews / REVIEWS_MEDIAN) +
+        STARS_WEIGHT * logNormalCdf(stars / STARS_MEDIAN) +
+        FOLLOWERS_WEIGHT * logNormalCdf(followers / FOLLOWERS_MEDIAN)
+    ) / TOTAL_WEIGHT;
+
+    const percentile = rank * 100;
+    const level = LEVELS[THRESHOLDS.findIndex((t) => percentile <= t)];
+    return { level, percentile };
 }
 
 // ── SVG builders ───────────────────────────────────────────────────────────
@@ -366,10 +386,11 @@ ${Array.from({ length: 5 }, (_, i) => {
     ${views}`;
 }
 
-function generateSVG(userData, streak, languages, stars, commits, prs, issues, rankPct, spotify, viewCount) {
+function generateSVG(userData, streak, languages, stars, commits, prs, issues, rank, spotify, viewCount) {
     const total = userData.contributionsCollection.contributionCalendar.totalContributions;
     const rankCirc = 2 * Math.PI * 38;
-    const rankFill = (1 - rankPct / 100) * rankCirc;
+    // Lower percentile = better rank = fuller ring.
+    const rankFill = (1 - rank.percentile / 100) * rankCirc;
     const sCX = 380, sCY = 280, sR = 34, sStroke = 2.5;
 
     return `<svg width="760" height="456" viewBox="0 0 760 456" xmlns="http://www.w3.org/2000/svg" role="img">
@@ -400,7 +421,7 @@ function generateSVG(userData, streak, languages, stars, commits, prs, issues, r
   <circle cx="408" cy="112" r="38" fill="none" stroke="${theme.accent}" stroke-width="3"
     stroke-dasharray="${rankFill.toFixed(1)} ${(rankCirc - rankFill).toFixed(1)}"
     stroke-dashoffset="0" transform="rotate(-90 408 112)"/>
-  <text x="408" y="118" ${theme.font} font-size="18" font-weight="700" fill="${theme.text}" text-anchor="middle">A+</text>
+  <text x="408" y="118" ${theme.font} font-size="18" font-weight="700" fill="${theme.text}" text-anchor="middle">${rank.level}</text>
 
   <!-- Languages card -->
   <rect x="482" y="16" width="262" height="188" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
@@ -455,13 +476,14 @@ module.exports = async (req, res) => {
                           + (gitHubUser.previous?.totalPullRequestContributions ?? 0);
         const issues      = (gitHubUser.current?.totalIssueContributions ?? 0)
                           + (gitHubUser.previous?.totalIssueContributions ?? 0);
-        const rankPct     = calculateRank({
-            commits: gitHubUser.current?.totalCommitContributions ?? 0,
-            pullRequests: prs, issues, stars,
+        const reviews     = (gitHubUser.current?.totalPullRequestReviewContributions ?? 0)
+                          + (gitHubUser.previous?.totalPullRequestReviewContributions ?? 0);
+        const rank        = calculateRank({
+            commits, pullRequests: prs, issues, reviews, stars,
             followers: gitHubUser.followers.totalCount,
         });
 
-        const svg = generateSVG(gitHubUser, streak, languages, stars, commits, prs, issues, rankPct, spotify, viewCount);
+        const svg = generateSVG(gitHubUser, streak, languages, stars, commits, prs, issues, rank, spotify, viewCount);
 
         res.setHeader("Content-Type", "image/svg+xml");
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
