@@ -1,4 +1,7 @@
 const https = require("https");
+const { kv } = require("@vercel/kv");
+
+const KV_KEY = "profile_views";
 
 const username = "S0x2-dev";
 const spotifyUserId = "31leep2d5rpspzgszzi6glolhul4";
@@ -143,11 +146,14 @@ async function fetchSpotifyData() {
 }
 
 async function fetchProfileViews() {
-    const data = await httpGet("komarev.com", "/ghpvc/?username=S0x2-dev&format=true&base=0");
-    const vals = [...data.matchAll(/<text[^>]*>([^<]*)<\/text>/g)]
-        .map((m) => m[1].replace(/[,\s]/g, ""))
-        .filter((v) => /^\d+$/.test(v));
-    return vals.length ? parseInt(vals[vals.length - 1], 10) : 0;
+    // Increment the counter on every request (each card load = one profile view)
+    // and return the updated value. Falls back to 0 if KV is not configured.
+    try {
+        const count = await kv.incr(KV_KEY);
+        return count;
+    } catch {
+        return 0;
+    }
 }
 
 // ── stat computation ───────────────────────────────────────────────────────
