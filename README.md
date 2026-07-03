@@ -8,7 +8,7 @@
   <img alt="github-snake" src="https://raw.githubusercontent.com/S0x2-dev/S0x2-dev/output/github-snake.svg" />
 </picture>
 <div align="center">
-  <img src="./profile-card.svg" alt="GitHub Stats" width="760" />
+  <img src="https://YOUR-PROJECT.vercel.app/api/card" alt="GitHub Stats" width="760" />
 </div>
 </td>
 </tr>
