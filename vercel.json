@@ -2,6 +2,9 @@
   "functions": {
     "api/card.js": {
       "maxDuration": 15
+    },
+    "api/snake.js": {
+      "maxDuration": 15
     }
   }
 }
