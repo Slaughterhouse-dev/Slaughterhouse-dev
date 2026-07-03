@@ -465,6 +465,9 @@ module.exports = async (req, res) => {
 
         res.setHeader("Content-Type", "image/svg+xml");
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+        res.setHeader("ETag", `"${Date.now()}"`);
         res.status(200).send(svg);
     } catch (err) {
         console.error(err);
