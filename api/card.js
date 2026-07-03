@@ -130,7 +130,7 @@ async function fetchGitHubData(token) {
 }
 
 async function fetchSpotifyData() {
-    const fallback = { trackName: null, artist: null, trackColor: spotifyGreen, albumArt: null };
+    const fallback = { trackName: null, artist: null, trackColor: theme.accent, albumArt: null };
     const data = await httpGet(
         "spotify-github-profile.kittinanx.com",
         `/api/view?uid=${spotifyUserId}`
@@ -162,7 +162,7 @@ async function fetchSpotifyData() {
         }
     }
 
-    return { trackName: song, artist: artist || "", trackColor: spotifyGreen, albumArt };
+    return { trackName: song, artist: artist || "", trackColor: theme.accent, albumArt };
 }
 
 async function fetchProfileViews() {
@@ -281,7 +281,7 @@ function createViewsBadge(viewCount, rightX, centerY) {
 }
 
 function createBottomRow(spotify, viewCount) {
-    const { trackName, artist, trackColor, albumArt } = spotify;
+    const { trackName, artist, albumArt } = spotify;
     const LINE_Y = 378;
     const views = createViewsBadge(viewCount, 728, 409);
 
@@ -292,32 +292,54 @@ function createBottomRow(spotify, viewCount) {
     ${views}`;
     }
 
-    const maxChars = 26;
-    const trackLabel  = trackName.length > maxChars ? trackName.slice(0, maxChars - 1).trimEnd() + "…" : trackName;
-    const artistLabel = artist.length  > maxChars ? artist.slice(0, maxChars - 1).trimEnd()  + "…" : artist;
-
-    // Album art tile: 46×46 centered in the row, 3px below the separator
+    // Album art tile
     const AX = 32, AY = LINE_Y + 3, AS = 46, AR = 7;
     const artBlock = albumArt ? `
     <defs>
       <clipPath id="ac"><rect x="${AX}" y="${AY}" width="${AS}" height="${AS}" rx="${AR}"/></clipPath>
     </defs>
     <rect x="${AX - 1}" y="${AY - 1}" width="${AS + 2}" height="${AS + 2}" rx="${AR + 1}"
-          fill="none" stroke="${trackColor}" stroke-width="1.5" opacity="0.45"/>
+          fill="none" stroke="${theme.accent}" stroke-width="1.5" opacity="0.5"/>
     <image href="${albumArt}" x="${AX}" y="${AY}" width="${AS}" height="${AS}"
            clip-path="url(#ac)" preserveAspectRatio="xMidYMid slice"/>` : "";
 
     const TX = albumArt ? AX + AS + 12 : 32;
-    const textBlock = `
-    <text x="${TX}" y="${AY + 16}" ${theme.font} font-size="13" font-weight="700" fill="${theme.text}">${escapeXml(trackLabel)}</text>
-    <text x="${TX}" y="${AY + 32}" ${theme.font} font-size="11" fill="${theme.muted}">${escapeXml(artistLabel)}</text>`;
+    // Clip width: from TX to equalizer start (TX+218), minus small padding
+    const CLIP_W = 210;
+    const AVG_CH_TRACK  = 7.5;  // px per char at font-size 13 bold
+    const AVG_CH_ARTIST = 6.5;  // px per char at font-size 11
+    const trackPx  = trackName.length  * AVG_CH_TRACK;
+    const artistPx = artist.length     * AVG_CH_ARTIST;
 
-    // Animated equalizer — 5 bars
-    const EQX = TX + 218, EQY = AY + 42, EQH = 18, BW = 3, BG = 3;
+    // Build scrolling or static text block
+    const makeText = (text, x, y, fs, fw, fill, totalPx, id) => {
+        const overflow = Math.round(totalPx - CLIP_W + 8);
+        if (overflow <= 0) {
+            return `<text x="${x}" y="${y}" ${theme.font} font-size="${fs}" font-weight="${fw}" fill="${fill}">${escapeXml(text)}</text>`;
+        }
+        const dur = Math.max(5, Math.round(overflow / 20)) + "s";
+        return `
+    <defs><clipPath id="cl${id}"><rect x="${x}" y="${y - fs}" width="${CLIP_W}" height="${fs + 4}"/></clipPath></defs>
+    <g clip-path="url(#cl${id})">
+      <text x="${x}" y="${y}" ${theme.font} font-size="${fs}" font-weight="${fw}" fill="${fill}">
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -${overflow},0; -${overflow},0; 0,0"
+          keyTimes="0; 0.45; 0.9; 1" dur="${dur}" repeatCount="indefinite" begin="1s"/>
+        ${escapeXml(text)}
+      </text>
+    </g>`;
+    };
+
+    const textBlock =
+        makeText(trackName, TX, AY + 17, 13, "700", theme.text,  trackPx,  "t") +
+        makeText(artist,    TX, AY + 33, 11, "400", theme.muted, artistPx, "a");
+
+    // Animated equalizer (accent colour)
+    const EQX = TX + 218, EQY = AY + 43, EQH = 18, BW = 3, BG = 3;
     const delays  = [0, 0.18, 0.07, 0.29, 0.12];
     const periods = [0.85, 0.70, 0.95, 0.75, 0.88];
     const eqBars = Array.from({ length: 5 }, (_, i) =>
-        `<rect class="eq${i}" x="${EQX + i * (BW + BG)}" y="${EQY - EQH}" width="${BW}" height="${EQH}" rx="1.5" fill="${trackColor}"/>`
+        `<rect class="eq${i}" x="${EQX + i*(BW+BG)}" y="${EQY - EQH}" width="${BW}" height="${EQH}" rx="1.5" fill="${theme.accent}"/>`
     ).join("");
     const eqStyle = `<style>
 ${Array.from({ length: 5 }, (_, i) => {
@@ -329,9 +351,7 @@ ${Array.from({ length: 5 }, (_, i) => {
 
     return `
     <line x1="16" y1="${LINE_Y}" x2="744" y2="${LINE_Y}" stroke="${theme.border}" stroke-width="0.5"/>
-    ${eqStyle}
-    ${artBlock}
-    ${textBlock}
+    ${eqStyle}${artBlock}${textBlock}
     ${eqBars}
     ${views}`;
 }
