@@ -129,7 +129,7 @@ async function fetchGitHubData(token) {
 }
 
 async function fetchSpotifyData() {
-    const fallback = { trackName: null, trackColor: spotifyGreen };
+    const fallback = { trackName: null, artist: null, trackColor: spotifyGreen, albumArt: null };
     const data = await httpGet(
         "spotify-github-profile.kittinanx.com",
         `/api/view?uid=${spotifyUserId}`
@@ -142,7 +142,15 @@ async function fetchSpotifyData() {
     const song = grab("song");
     const artist = grab("artist");
     if (!song) return fallback;
-    return { trackName: artist ? `${song} — ${artist}` : song, trackColor: spotifyGreen };
+
+    // Extract base64 album cover embedded in the SVG response
+    const mimeMatch = data.match(/data:(image\/[a-z]+);base64,/);
+    const b64Match  = data.match(/data:image\/[a-z]+;base64,([A-Za-z0-9+/=]{100,})/);
+    const albumArt  = (mimeMatch && b64Match)
+        ? `data:${mimeMatch[1]};base64,${b64Match[1]}`
+        : null;
+
+    return { trackName: song, artist: artist || "", trackColor: spotifyGreen, albumArt };
 }
 
 async function fetchProfileViews() {
@@ -260,26 +268,61 @@ function createViewsBadge(viewCount, rightX, centerY) {
     <text x="${x + lw + cw / 2}" y="${ty}" ${theme.font} font-size="${fs}" font-weight="700" fill="${theme.text}" text-anchor="middle">${count}</text>`;
 }
 
-function createBottomRow(trackName, trackColor, viewCount) {
-    const leftX = 32;
-    const rowY = 415;
+function createBottomRow(spotify, viewCount) {
+    const { trackName, artist, trackColor, albumArt } = spotify;
+    const views = createViewsBadge(viewCount, 728, 411);
 
-    const views = createViewsBadge(viewCount, 728, rowY - 4);
+    if (!trackName) {
+        return `
+    <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+    <text x="32" y="419" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
+    ${views}`;
+    }
 
-    const music = !trackName
-        ? `<text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>`
-        : (() => {
-            const maxLen = 36;
-            const label = trackName.length > maxLen ? trackName.slice(0, maxLen - 1).trimEnd() + "…" : trackName;
-            const bw = Math.min(300, 28 + label.length * 6.6);
-            return `<rect x="${leftX}" y="${rowY - 14}" width="${bw.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
-            <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
-            <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>`;
-        })();
+    // Truncate labels so they stay left of the equalizer
+    const maxChars = 26;
+    const trackLabel  = trackName.length > maxChars ? trackName.slice(0, maxChars - 1).trimEnd() + "…" : trackName;
+    const artistLabel = artist.length  > maxChars ? artist.slice(0, maxChars - 1).trimEnd()  + "…" : artist;
+
+    // Album-art tile: 46×46 with rounded corners + accent glow border
+    const AX = 32, AY = 393, AS = 46, AR = 7;
+    const artBlock = albumArt ? `
+    <defs>
+      <clipPath id="ac"><rect x="${AX}" y="${AY}" width="${AS}" height="${AS}" rx="${AR}"/></clipPath>
+    </defs>
+    <rect x="${AX - 1}" y="${AY - 1}" width="${AS + 2}" height="${AS + 2}" rx="${AR + 1}"
+          fill="none" stroke="${trackColor}" stroke-width="1.5" opacity="0.45"/>
+    <image href="${albumArt}" x="${AX}" y="${AY}" width="${AS}" height="${AS}"
+           clip-path="url(#ac)" preserveAspectRatio="xMidYMid slice"/>` : "";
+
+    // Text block (right of art)
+    const TX = albumArt ? AX + AS + 12 : 32;
+    const textBlock = `
+    <text x="${TX}" y="409" ${theme.font} font-size="13" font-weight="700" fill="${theme.text}">${escapeXml(trackLabel)}</text>
+    <text x="${TX}" y="427" ${theme.font} font-size="11" fill="${theme.muted}">${escapeXml(artistLabel)}</text>`;
+
+    // Animated equalizer — 5 bars at fixed x after text, vertically centred
+    const EQX = TX + 218, EQY = 428, EQH = 18, BW = 3, BG = 3;
+    const delays  = [0, 0.18, 0.07, 0.29, 0.12];
+    const periods = [0.85, 0.70, 0.95, 0.75, 0.88];
+    const eqBars = Array.from({ length: 5 }, (_, i) =>
+        `<rect class="eq${i}" x="${EQX + i * (BW + BG)}" y="${EQY - EQH}" width="${BW}" height="${EQH}" rx="1.5" fill="${trackColor}"/>`
+    ).join("");
+
+    const eqStyle = `<style>
+${Array.from({ length: 5 }, (_, i) => {
+    const lo = (0.2 + i * 0.05).toFixed(2);
+    return `@keyframes eq${i}{0%,100%{transform:scaleY(${lo})}50%{transform:scaleY(1)}}` +
+           `.eq${i}{transform-box:fill-box;transform-origin:bottom;animation:eq${i} ${periods[i]}s ease-in-out ${delays[i]}s infinite;}`;
+}).join("")}
+</style>`;
 
     return `
     <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-    ${music}
+    ${eqStyle}
+    ${artBlock}
+    ${textBlock}
+    ${eqBars}
     ${views}`;
 }
 
@@ -340,7 +383,7 @@ function generateSVG(userData, streak, languages, stars, commits, prs, issues, r
   <text x="621" y="293" ${theme.font} font-size="25" font-weight="700" fill="${theme.text}"  text-anchor="middle">${streak.longest}</text>
   <text x="621" y="311" ${theme.font} font-size="12"                   fill="${theme.muted}" text-anchor="middle">Longest Streak</text>
 
-  ${createBottomRow(spotify.trackName, spotify.trackColor, viewCount)}
+  ${createBottomRow(spotify, viewCount)}
 </svg>`;
 }
 
