@@ -317,14 +317,24 @@ function createBottomRow(spotify, viewCount) {
         if (overflow <= 0) {
             return `<text x="${x}" y="${y}" ${theme.font} font-size="${fs}" font-weight="${fw}" fill="${fill}">${escapeXml(text)}</text>`;
         }
-        const dur = Math.max(5, Math.round(overflow / 20)) + "s";
+        // Smooth back-and-forth marquee:
+        // pause → slide left (ease) → pause → slide right (ease) → pause
+        const moveDur = Math.max(3, Math.round(overflow / 18));
+        const pauseDur = 1.5;
+        const total = (moveDur * 2 + pauseDur * 3).toFixed(1);
+        const t1 = (pauseDur / total).toFixed(3);
+        const t2 = ((pauseDur + moveDur) / total).toFixed(3);
+        const t3 = ((pauseDur + moveDur + pauseDur) / total).toFixed(3);
+        const t4 = ((pauseDur * 2 + moveDur * 2) / total).toFixed(3);
         return `
     <defs><clipPath id="cl${id}"><rect x="${x}" y="${y - fs}" width="${CLIP_W}" height="${fs + 4}"/></clipPath></defs>
     <g clip-path="url(#cl${id})">
       <text x="${x}" y="${y}" ${theme.font} font-size="${fs}" font-weight="${fw}" fill="${fill}">
         <animateTransform attributeName="transform" type="translate"
-          values="0,0; -${overflow},0; -${overflow},0; 0,0"
-          keyTimes="0; 0.45; 0.9; 1" dur="${dur}" repeatCount="indefinite" begin="1s"/>
+          values="0,0; 0,0; -${overflow},0; -${overflow},0; 0,0; 0,0"
+          keyTimes="0; ${t1}; ${t2}; ${t3}; ${t4}; 1"
+          keySplines="0 0 1 1; 0.42 0 0.58 1; 0 0 1 1; 0.42 0 0.58 1; 0 0 1 1"
+          calcMode="spline" dur="${total}s" repeatCount="indefinite" begin="1s"/>
         ${escapeXml(text)}
       </text>
     </g>`;
