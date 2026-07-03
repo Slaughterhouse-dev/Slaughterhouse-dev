@@ -143,12 +143,23 @@ async function fetchSpotifyData() {
     const artist = grab("artist");
     if (!song) return fallback;
 
-    // Extract base64 album cover embedded in the SVG response
-    const mimeMatch = data.match(/data:(image\/[a-z]+);base64,/);
-    const b64Match  = data.match(/data:image\/[a-z]+;base64,([A-Za-z0-9+/=]{100,})/);
-    const albumArt  = (mimeMatch && b64Match)
-        ? `data:${mimeMatch[1]};base64,${b64Match[1]}`
-        : null;
+    // Extract album cover from the <img class="cover"> element specifically.
+    // The SVG has multiple base64 images (Spotify logo etc.) — we want only the cover.
+    const coverEl = data.match(/<img\b[^>]+class="cover"[^>]*>/i)
+                 || data.match(/<img\b[^>]+src="(data:image\/[^"]+)"[^>]*class="cover"/i);
+    let albumArt = null;
+    if (coverEl) {
+        const srcM = coverEl[0].match(/src="(data:image\/[^"]+)"/i);
+        if (srcM) albumArt = srcM[1];
+    }
+    // Fallback: grab the last (largest) base64 image — usually the album art
+    if (!albumArt) {
+        const all = [...data.matchAll(/data:(image\/[a-z]+);base64,([A-Za-z0-9+/=]{200,})/g)];
+        if (all.length) {
+            const last = all[all.length - 1];
+            albumArt = `data:${last[1]};base64,${last[2]}`;
+        }
+    }
 
     return { trackName: song, artist: artist || "", trackColor: spotifyGreen, albumArt };
 }
@@ -270,22 +281,22 @@ function createViewsBadge(viewCount, rightX, centerY) {
 
 function createBottomRow(spotify, viewCount) {
     const { trackName, artist, trackColor, albumArt } = spotify;
-    const views = createViewsBadge(viewCount, 728, 411);
+    const LINE_Y = 378;
+    const views = createViewsBadge(viewCount, 728, 409);
 
     if (!trackName) {
         return `
-    <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-    <text x="32" y="419" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
+    <line x1="16" y1="${LINE_Y}" x2="744" y2="${LINE_Y}" stroke="${theme.border}" stroke-width="0.5"/>
+    <text x="32" y="415" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
     ${views}`;
     }
 
-    // Truncate labels so they stay left of the equalizer
     const maxChars = 26;
     const trackLabel  = trackName.length > maxChars ? trackName.slice(0, maxChars - 1).trimEnd() + "…" : trackName;
     const artistLabel = artist.length  > maxChars ? artist.slice(0, maxChars - 1).trimEnd()  + "…" : artist;
 
-    // Album-art tile: 46×46 with rounded corners + accent glow border
-    const AX = 32, AY = 393, AS = 46, AR = 7;
+    // Album art tile: 46×46 centered in the row, 3px below the separator
+    const AX = 32, AY = LINE_Y + 3, AS = 46, AR = 7;
     const artBlock = albumArt ? `
     <defs>
       <clipPath id="ac"><rect x="${AX}" y="${AY}" width="${AS}" height="${AS}" rx="${AR}"/></clipPath>
@@ -295,20 +306,18 @@ function createBottomRow(spotify, viewCount) {
     <image href="${albumArt}" x="${AX}" y="${AY}" width="${AS}" height="${AS}"
            clip-path="url(#ac)" preserveAspectRatio="xMidYMid slice"/>` : "";
 
-    // Text block (right of art)
     const TX = albumArt ? AX + AS + 12 : 32;
     const textBlock = `
-    <text x="${TX}" y="409" ${theme.font} font-size="13" font-weight="700" fill="${theme.text}">${escapeXml(trackLabel)}</text>
-    <text x="${TX}" y="427" ${theme.font} font-size="11" fill="${theme.muted}">${escapeXml(artistLabel)}</text>`;
+    <text x="${TX}" y="${AY + 16}" ${theme.font} font-size="13" font-weight="700" fill="${theme.text}">${escapeXml(trackLabel)}</text>
+    <text x="${TX}" y="${AY + 32}" ${theme.font} font-size="11" fill="${theme.muted}">${escapeXml(artistLabel)}</text>`;
 
-    // Animated equalizer — 5 bars at fixed x after text, vertically centred
-    const EQX = TX + 218, EQY = 428, EQH = 18, BW = 3, BG = 3;
+    // Animated equalizer — 5 bars
+    const EQX = TX + 218, EQY = AY + 42, EQH = 18, BW = 3, BG = 3;
     const delays  = [0, 0.18, 0.07, 0.29, 0.12];
     const periods = [0.85, 0.70, 0.95, 0.75, 0.88];
     const eqBars = Array.from({ length: 5 }, (_, i) =>
         `<rect class="eq${i}" x="${EQX + i * (BW + BG)}" y="${EQY - EQH}" width="${BW}" height="${EQH}" rx="1.5" fill="${trackColor}"/>`
     ).join("");
-
     const eqStyle = `<style>
 ${Array.from({ length: 5 }, (_, i) => {
     const lo = (0.2 + i * 0.05).toFixed(2);
@@ -318,7 +327,7 @@ ${Array.from({ length: 5 }, (_, i) => {
 </style>`;
 
     return `
-    <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+    <line x1="16" y1="${LINE_Y}" x2="744" y2="${LINE_Y}" stroke="${theme.border}" stroke-width="0.5"/>
     ${eqStyle}
     ${artBlock}
     ${textBlock}
