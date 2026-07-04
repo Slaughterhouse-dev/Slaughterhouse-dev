@@ -97,7 +97,7 @@ async function fetchGitHubData(token) {
     const { data } = await executeGraphQL(`
         query($login: String!, $startTime: DateTime!) {
           user(login: $login) {
-            repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+            repositories(ownerAffiliations: OWNER, first: 100) {
               nodes {
                 stargazerCount
                 languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
