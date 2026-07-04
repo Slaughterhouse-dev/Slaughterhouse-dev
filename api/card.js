@@ -17,8 +17,6 @@ const theme = {
     font: `font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"`,
 };
 
-// ── helpers ────────────────────────────────────────────────────────────────
-
 function escapeXml(value) {
     return String(value)
         .replace(/&/g, "&amp;")
@@ -44,8 +42,6 @@ function decodeEntities(text) {
         .replace(/&#x([0-9a-fA-F]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
         .replace(/&#(\d+);/g, (_, c) => String.fromCharCode(parseInt(c, 10)));
 }
-
-// ── data fetchers ──────────────────────────────────────────────────────────
 
 function executeGraphQL(query, variables, token) {
     return new Promise((resolve, reject) => {
@@ -90,8 +86,6 @@ function httpGet(hostname, path) {
 }
 
 async function fetchGitHubData(token) {
-    // Mirrors github-readme-stats: commits are last-year only, while PRs and
-    // issues are lifetime totals. `startTime` bounds the commit window.
     const startTime = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data } = await executeGraphQL(`
@@ -99,9 +93,6 @@ async function fetchGitHubData(token) {
           user(login: $login) {
             repositories(ownerAffiliations: OWNER, first: 100) {
               nodes {
-                name
-                isFork
-                isPrivate
                 stargazerCount
                 languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
                   edges { size node { name color } }
@@ -150,8 +141,6 @@ async function fetchSpotifyData() {
     const artist = grab("artist");
     if (!song) return fallback;
 
-    // Extract album cover from the <img class="cover"> element specifically.
-    // The SVG has multiple base64 images (Spotify logo etc.) — we want only the cover.
     const coverEl = data.match(/<img\b[^>]+class="cover"[^>]*>/i)
                  || data.match(/<img\b[^>]+src="(data:image\/[^"]+)"[^>]*class="cover"/i);
     let albumArt = null;
@@ -159,7 +148,6 @@ async function fetchSpotifyData() {
         const srcM = coverEl[0].match(/src="(data:image\/[^"]+)"/i);
         if (srcM) albumArt = srcM[1];
     }
-    // Fallback: grab the last (largest) base64 image — usually the album art
     if (!albumArt) {
         const all = [...data.matchAll(/data:(image\/[a-z]+);base64,([A-Za-z0-9+/=]{200,})/g)];
         if (all.length) {
@@ -172,8 +160,6 @@ async function fetchSpotifyData() {
 }
 
 async function fetchProfileViews() {
-    // Increment the counter on every request (each card load = one profile view)
-    // and return the updated value. Falls back to 0 if KV is not configured.
     try {
         const count = await kv.incr(KV_KEY);
         return count;
@@ -181,8 +167,6 @@ async function fetchProfileViews() {
         return 0;
     }
 }
-
-// ── stat computation ───────────────────────────────────────────────────────
 
 function calculateStreak(weeks) {
     const allDays = weeks.flatMap((w) => w.contributionDays)
@@ -220,8 +204,6 @@ function getTopLanguages(repos) {
     }));
 }
 
-// Mirrors github-readme-stats' rank algorithm (MIT).
-// Returns { level: "S"|"A+"|... , percentile } where a lower percentile is better.
 function calculateRank({ commits, pullRequests, issues, reviews, stars, followers }) {
     const expCdf = (x) => 1 - Math.pow(2, -x);
     const logNormalCdf = (x) => x / (1 + x);
@@ -250,8 +232,6 @@ function calculateRank({ commits, pullRequests, issues, reviews, stars, follower
     const level = LEVELS[THRESHOLDS.findIndex((t) => percentile <= t)];
     return { level, percentile };
 }
-
-// ── SVG builders ───────────────────────────────────────────────────────────
 
 function createDonutChart(languages, cx, cy, r) {
     const circ = 2 * Math.PI * r;
@@ -317,7 +297,6 @@ function createBottomRow(spotify, viewCount) {
     ${views}`;
     }
 
-    // Album art tile
     const AX = 32, AY = LINE_Y + 3, AS = 46, AR = 7;
     const artBlock = albumArt ? `
     <defs>
@@ -329,21 +308,17 @@ function createBottomRow(spotify, viewCount) {
            clip-path="url(#ac)" preserveAspectRatio="xMidYMid slice"/>` : "";
 
     const TX = albumArt ? AX + AS + 12 : 32;
-    // Clip width: from TX to equalizer start (TX+218), minus small padding
     const CLIP_W = 210;
-    const AVG_CH_TRACK  = 7.5;  // px per char at font-size 13 bold
-    const AVG_CH_ARTIST = 6.5;  // px per char at font-size 11
+    const AVG_CH_TRACK  = 7.5;
+    const AVG_CH_ARTIST = 6.5;
     const trackPx  = trackName.length  * AVG_CH_TRACK;
     const artistPx = artist.length     * AVG_CH_ARTIST;
 
-    // Build scrolling or static text block
     const makeText = (text, x, y, fs, fw, fill, totalPx, id) => {
         const overflow = Math.round(totalPx - CLIP_W + 8);
         if (overflow <= 0) {
             return `<text x="${x}" y="${y}" ${theme.font} font-size="${fs}" font-weight="${fw}" fill="${fill}">${escapeXml(text)}</text>`;
         }
-        // Smooth back-and-forth marquee:
-        // pause → slide left (ease) → pause → slide right (ease) → pause
         const moveDur = Math.max(3, Math.round(overflow / 18));
         const pauseDur = 1.5;
         const total = (moveDur * 2 + pauseDur * 3).toFixed(1);
@@ -369,7 +344,6 @@ function createBottomRow(spotify, viewCount) {
         makeText(trackName, TX, AY + 17, 13, "700", theme.text,  trackPx,  "t") +
         makeText(artist,    TX, AY + 33, 11, "400", theme.muted, artistPx, "a");
 
-    // Animated equalizer (accent colour)
     const EQX = TX + 218, EQY = AY + 43, EQH = 18, BW = 3, BG = 3;
     const delays  = [0, 0.18, 0.07, 0.29, 0.12];
     const periods = [0.85, 0.70, 0.95, 0.75, 0.88];
@@ -394,7 +368,6 @@ ${Array.from({ length: 5 }, (_, i) => {
 function generateSVG(userData, streak, languages, stars, commits, prs, issues, rank, spotify, viewCount) {
     const total = userData.contributionsCollection.contributionCalendar.totalContributions;
     const rankCirc = 2 * Math.PI * 38;
-    // Lower percentile = better rank = fuller ring.
     const rankFill = (1 - rank.percentile / 100) * rankCirc;
     const sCX = 380, sCY = 280, sR = 34, sStroke = 2.5;
 
@@ -409,7 +382,6 @@ function generateSVG(userData, streak, languages, stars, commits, prs, issues, r
 
   <rect width="760" height="456" rx="10" fill="${theme.background}" stroke="${theme.border}" stroke-width="1"/>
 
-  <!-- Stats card -->
   <rect x="16" y="16" width="454" height="188" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
   <text x="32" y="44" ${theme.font} font-size="15" font-weight="600" fill="${theme.accent}">S0x2-dev's GitHub Stats</text>
   <text x="32"  y="76"  ${theme.font} font-size="13" fill="${theme.muted}">Total Stars Earned:</text>
@@ -428,13 +400,11 @@ function generateSVG(userData, streak, languages, stars, commits, prs, issues, r
     stroke-dashoffset="0" transform="rotate(-90 408 112)"/>
   <text x="408" y="118" ${theme.font} font-size="18" font-weight="700" fill="${theme.text}" text-anchor="middle">${rank.level}</text>
 
-  <!-- Languages card -->
   <rect x="482" y="16" width="262" height="188" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
   <text x="506" y="44" ${theme.font} font-size="15" font-weight="600" fill="${theme.accent}">Most Used Languages</text>
   ${createLanguageLegend(languages, 506, 64, 22)}
   ${createDonutChart(languages, 685, 119, 34)}
 
-  <!-- Streak + contributions card -->
   <rect x="16" y="220" width="728" height="220" rx="8" fill="${theme.cardBackground}" stroke="${theme.border}" stroke-width="0.5"/>
   <text x="137" y="293" ${theme.font} font-size="25" font-weight="700" fill="${theme.text}" text-anchor="middle">${total.toLocaleString()}</text>
   <text x="137" y="311" ${theme.font} font-size="12" fill="${theme.muted}" text-anchor="middle">Total Contributions</text>
@@ -453,8 +423,6 @@ function generateSVG(userData, streak, languages, stars, commits, prs, issues, r
 </svg>`;
 }
 
-// ── Vercel handler ─────────────────────────────────────────────────────────
-
 module.exports = async (req, res) => {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
@@ -463,26 +431,6 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Temporary diagnostics: /api/card?debug=langs returns a per-repo
-        // language breakdown so we can see where each language's bytes come from.
-        if (req.query?.debug === "langs") {
-            const user = await fetchGitHubData(token);
-            const byRepo = user.repositories.nodes.map((r) => ({
-                name: r.name,
-                isFork: r.isFork,
-                isPrivate: r.isPrivate,
-                languages: r.languages.edges.map((e) => ({ name: e.node.name, size: e.size })),
-            }));
-            const totals = {};
-            for (const r of byRepo) {
-                for (const l of r.languages) totals[l.name] = (totals[l.name] || 0) + l.size;
-            }
-            res.setHeader("Content-Type", "application/json");
-            res.status(200).send(JSON.stringify({ totals, byRepo }, null, 2));
-            return;
-        }
-
-        // Fetch all data in parallel — GitHub, Spotify, profile views.
         const [gitHubUser, spotify, viewCount] = await Promise.all([
             fetchGitHubData(token),
             fetchSpotifyData(),

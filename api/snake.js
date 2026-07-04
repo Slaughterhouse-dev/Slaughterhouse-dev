@@ -4,8 +4,6 @@ const owner = "S0x2-dev";
 const repo = "S0x2-dev";
 const branch = "output";
 
-// Fetch a file from a (possibly private) repo via the GitHub API using a token.
-// Uses the raw media type so the response body is the file itself, not JSON.
 function fetchRepoFile(path, token) {
     return new Promise((resolve, reject) => {
         const req = https.request(
@@ -40,14 +38,12 @@ module.exports = async (req, res) => {
         return;
     }
 
-    // ?palette=dark (or ?theme=dark) serves the dark variant.
     const palette = (req.query?.palette || req.query?.theme || "").toLowerCase();
     const file = palette === "dark" ? "github-snake-dark.svg" : "github-snake.svg";
 
     try {
         const svg = await fetchRepoFile(file, token);
         res.setHeader("Content-Type", "image/svg+xml");
-        // Snake is regenerated once a day; cache for an hour on the CDN.
         res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
         res.status(200).send(svg);
     } catch (err) {

@@ -84,9 +84,6 @@ function fetchSpotifyData() {
             response.on("data", (chunk) => (data += chunk));
             response.on("end", () => {
                 try {
-                    // The endpoint returns an SVG whose <foreignObject> holds the
-                    // now-playing markup: <div class="song">..</div>, <div class="artist">..</div>.
-                    // When idle it renders <div class="not-play">..</div> instead.
                     if (/class="not-play"/.test(data)) {
                         resolve(fallback);
                         return;
