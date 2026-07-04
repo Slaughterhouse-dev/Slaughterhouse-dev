@@ -90,21 +90,14 @@ function httpGet(hostname, path) {
 }
 
 async function fetchGitHubData(token) {
-    const now = new Date();
-    const yearFragments = [now.getFullYear(), now.getFullYear() - 1].map((year, i) => `
-        ${i === 0 ? "current" : "previous"}: contributionsCollection(
-            from: "${year}-01-01T00:00:00Z" to: "${year}-12-31T23:59:59Z"
-        ) {
-            totalCommitContributions totalPullRequestContributions
-            totalIssueContributions  restrictedContributionsCount
-            totalPullRequestReviewContributions
-        }
-    `).join("");
+    // Mirrors github-readme-stats: commits are last-year only, while PRs and
+    // issues are lifetime totals. `startTime` bounds the commit window.
+    const startTime = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data } = await executeGraphQL(`
-        query($login: String!) {
+        query($login: String!, $startTime: DateTime!) {
           user(login: $login) {
-            repositories(ownerAffiliations: OWNER, first: 100) {
+            repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
               nodes {
                 stargazerCount
                 languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
@@ -118,7 +111,16 @@ async function fetchGitHubData(token) {
                 weeks { contributionDays { contributionCount date } }
               }
             }
-            ${yearFragments}
+            commits: contributionsCollection(from: $startTime) {
+              totalCommitContributions
+              restrictedContributionsCount
+            }
+            reviews: contributionsCollection {
+              totalPullRequestReviewContributions
+            }
+            pullRequests(first: 1) { totalCount }
+            openIssues: issues(states: OPEN) { totalCount }
+            closedIssues: issues(states: CLOSED) { totalCount }
             followers { totalCount }
             repositoriesContributedTo(
               first: 1
@@ -126,7 +128,7 @@ async function fetchGitHubData(token) {
             ) { totalCount }
           }
         }
-    `, { login: username }, token);
+    `, { login: username, startTime }, token);
     return data.user;
 }
 
@@ -468,16 +470,12 @@ module.exports = async (req, res) => {
         const languages   = getTopLanguages(gitHubUser.repositories.nodes);
         const streak      = calculateStreak(gitHubUser.contributionsCollection.contributionCalendar.weeks);
         const stars       = gitHubUser.repositories.nodes.reduce((s, r) => s + r.stargazerCount, 0);
-        const commits     = (gitHubUser.current?.totalCommitContributions ?? 0)
-                          + (gitHubUser.previous?.totalCommitContributions ?? 0)
-                          + (gitHubUser.current?.restrictedContributionsCount ?? 0)
-                          + (gitHubUser.previous?.restrictedContributionsCount ?? 0);
-        const prs         = (gitHubUser.current?.totalPullRequestContributions ?? 0)
-                          + (gitHubUser.previous?.totalPullRequestContributions ?? 0);
-        const issues      = (gitHubUser.current?.totalIssueContributions ?? 0)
-                          + (gitHubUser.previous?.totalIssueContributions ?? 0);
-        const reviews     = (gitHubUser.current?.totalPullRequestReviewContributions ?? 0)
-                          + (gitHubUser.previous?.totalPullRequestReviewContributions ?? 0);
+        const commits     = (gitHubUser.commits?.totalCommitContributions ?? 0)
+                          + (gitHubUser.commits?.restrictedContributionsCount ?? 0);
+        const prs         = gitHubUser.pullRequests?.totalCount ?? 0;
+        const issues      = (gitHubUser.openIssues?.totalCount ?? 0)
+                          + (gitHubUser.closedIssues?.totalCount ?? 0);
+        const reviews     = gitHubUser.reviews?.totalPullRequestReviewContributions ?? 0;
         const rank        = calculateRank({
             commits, pullRequests: prs, issues, reviews, stars,
             followers: gitHubUser.followers.totalCount,
