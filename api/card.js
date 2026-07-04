@@ -99,6 +99,9 @@ async function fetchGitHubData(token) {
           user(login: $login) {
             repositories(ownerAffiliations: OWNER, first: 100) {
               nodes {
+                name
+                isFork
+                isPrivate
                 stargazerCount
                 languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
                   edges { size node { name color } }
@@ -460,6 +463,25 @@ module.exports = async (req, res) => {
     }
 
     try {
+        // Temporary diagnostics: /api/card?debug=langs returns a per-repo
+        // language breakdown so we can see where each language's bytes come from.
+        if (req.query?.debug === "langs") {
+            const user = await fetchGitHubData(token);
+            const byRepo = user.repositories.nodes.map((r) => ({
+                name: r.name,
+                isFork: r.isFork,
+                isPrivate: r.isPrivate,
+                languages: r.languages.edges.map((e) => ({ name: e.node.name, size: e.size })),
+            }));
+            const totals = {};
+            for (const r of byRepo) {
+                for (const l of r.languages) totals[l.name] = (totals[l.name] || 0) + l.size;
+            }
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).send(JSON.stringify({ totals, byRepo }, null, 2));
+            return;
+        }
+
         // Fetch all data in parallel — GitHub, Spotify, profile views.
         const [gitHubUser, spotify, viewCount] = await Promise.all([
             fetchGitHubData(token),
