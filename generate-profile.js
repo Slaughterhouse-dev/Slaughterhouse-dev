@@ -17,12 +17,7 @@ const theme = {
 };
 
 function escapeXml(value) {
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
+    return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
 
 function executeGraphQL(query, variables) {
@@ -59,19 +54,16 @@ function executeGraphQL(query, variables) {
 }
 
 function decodeEntities(text) {
-    return text
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'")
-        .replace(/&apos;/g, "'")
-        .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+    return text.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'").replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
 }
 
 function fetchSpotifyData() {
     return new Promise((resolve) => {
-        const fallback = { trackName: null, trackColor: spotifyGreen, isPlaying: false };
+        const fallback = {
+            trackName: null,
+            trackColor: spotifyGreen,
+            isPlaying: false
+        };
         const options = {
             hostname: "spotify-github-profile.kittinanx.com",
             path: `/api/view?uid=${spotifyUserId}`,
@@ -90,9 +82,7 @@ function fetchSpotifyData() {
                     }
 
                     const grab = (className) => {
-                        const match = data.match(
-                            new RegExp(`class="${className}"[^>]*>([^<]+)<`)
-                        );
+                        const match = data.match(new RegExp(`class="${className}"[^>]*>([^<]+)<`));
                         return match ? decodeEntities(match[1]).trim() : null;
                     };
 
@@ -105,7 +95,11 @@ function fetchSpotifyData() {
                     }
 
                     const trackName = artist ? `${song} — ${artist}` : song;
-                    resolve({ trackName, trackColor: spotifyGreen, isPlaying: true });
+                    resolve({
+                        trackName,
+                        trackColor: spotifyGreen,
+                        isPlaying: true
+                    });
                 } catch (error) {
                     resolve(fallback);
                 }
@@ -122,20 +116,20 @@ async function fetchGitHubData() {
     const currentYear = now.getFullYear();
     const previousYear = currentYear - 1;
 
-const yearFragments = [
-  { year: currentYear, key: "current" },
-  { year: previousYear, key: "previous" },
-].map(({ year, key }) => `
-  ${key}: contributionsCollection(
-    from: "${year}-01-01T00:00:00Z"
-    to: "${year}-12-31T23:59:59Z"
-  ) {
-    totalCommitContributions
-    totalPullRequestContributions
-    totalIssueContributions
-    restrictedContributionsCount
-  }
-`).join("");
+    const yearFragments = [
+        {
+            year: currentYear,
+            key: "current"
+        }, {
+            year: previousYear,
+            key: "previous"
+        },
+    ].map(({ year, key }) => ` ${key}: contributionsCollection(from: "${year}-01-01T00:00:00Z"to: "${year}-12-31T23:59:59Z") {
+        totalCommitContributions
+        totalPullRequestContributions
+        totalIssueContributions
+        restrictedContributionsCount
+    }`).join("");
 
     const { data } = await executeGraphQL(`
         query($login: String!) {
@@ -198,7 +192,9 @@ function calculateStreak(weeks) {
     for (const day of [...allDays].reverse()) {
         if (day.contributionCount > 0) {
             tempStreakCount++;
-            if (tempStreakCount > longestStreakCount) longestStreakCount = tempStreakCount;
+            if (tempStreakCount > longestStreakCount) {
+                longestStreakCount = tempStreakCount;
+            }
         } else {
             tempStreakCount = 0;
         }
@@ -218,7 +214,10 @@ function getTopLanguages(repositories) {
     for (const repo of repositories) {
         for (const { size, node } of repo.languages.edges) {
             if (!languageMap[node.name]) {
-                languageMap[node.name] = { size: 0, color: node.color || theme.muted };
+                languageMap[node.name] = {
+                    size: 0,
+                    color: node.color || theme.muted
+                };
             }
             languageMap[node.name].size += size;
         }
@@ -288,12 +287,12 @@ function createLanguageLegend(languages, posX, startY, gap) {
 }
 
 function createFlame(centerX, centerY, size, color, ringStroke) {
-  const scale = size / 24;
-  const translateX = centerX - 12 * scale;
-  const translateY = centerY - 12 * scale;
-  const strokeWidth = (ringStroke / scale).toFixed(2);
+    const scale = size / 24;
+    const translateX = centerX - 12 * scale;
+    const translateY = centerY - 12 * scale;
+    const strokeWidth = (ringStroke / scale).toFixed(2);
 
-  return `
+    return `
     <g transform="translate(${translateX} ${translateY}) scale(${scale})">
       <path d="M 19.48 12.35 c -1.57 -4.08 -7.16 -4.3 -5.81 -10.23 c .1 -.44 -.37 -.78 -.75 -.55 C 9.29 3.71 6.68 8 8.87 13.62 c .18 .46 -.36 .89 -.75 .59 c -1.81 -1.37 -2 -3.34 -1.84 -4.75 c .06 -.52 -.62 -.77 -.91 -.34 C 4.69 10.16 4 11.84 4 14.37 c .38 5.6 5.11 7.32 6.81 7.54 c 2.43 .31 5.06 -.14 6.95 -1.87 c 2.08 -1.93 2.84 -5.01 1.72 -7.69 z"
             fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linejoin="round" stroke-linecap="round"/>
@@ -301,24 +300,26 @@ function createFlame(centerX, centerY, size, color, ringStroke) {
 }
 
 function createSpotifyCard(trackName, trackColor) {
-  const leftX = 32;
-  const rowY = 415;
+    const leftX = 32;
+    const rowY = 415;
 
-  if (!trackName) {
+    if (!trackName) {
+        return `
+            <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+            <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>
+        `;
+    }
+
+    const maxLength = 42;
+    const label = trackName.length > maxLength ? trackName.slice(0, maxLength - 1).trimEnd() + "…" : trackName;
+    const boxWidth = Math.min(340, 28 + label.length * 6.6);
+
     return `
-      <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-      <text x="${leftX}" y="${rowY}" ${theme.font} font-size="12" fill="${theme.muted}">♫ Not playing</text>`;
-  }
-
-  const maxLength = 42;
-  const label = trackName.length > maxLength ? trackName.slice(0, maxLength - 1).trimEnd() + "…" : trackName;
-  const boxWidth = Math.min(340, 28 + label.length * 6.6);
-
-  return `
-    <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
-    <rect x="${leftX}" y="${rowY - 14}" width="${boxWidth.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
-    <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
-    <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>`;
+        <line x1="16" y1="390" x2="744" y2="390" stroke="${theme.border}" stroke-width="0.5"/>
+        <rect x="${leftX}" y="${rowY - 14}" width="${boxWidth.toFixed(0)}" height="26" rx="4" fill="${trackColor}22"/>
+        <circle cx="${leftX + 12}" cy="${rowY}" r="4" fill="${trackColor}"/>
+        <text x="${leftX + 24}" y="${rowY + 5}" ${theme.font} font-size="12" font-weight="600" fill="${theme.text}">${escapeXml(label)}</text>
+    `;
 }
 
 function generateSVG(userData, streakInfo, languages, starCount, commitCount, prCount, issueCount, rankPercentile, spotify) {
