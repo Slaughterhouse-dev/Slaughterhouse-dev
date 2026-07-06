@@ -30,7 +30,7 @@
 
     <circle cx="408" cy="112" r="38" fill="none" stroke="#212022" stroke-width="3"/>
     <circle cx="408" cy="112" r="38" fill="none" stroke="#91a1f1" stroke-width="3"
-      stroke-dasharray="164.4 74.3"
+      stroke-dasharray="164.4 74.4"
       stroke-dashoffset="0"
       transform="rotate(-90 408 112)"/>
     <text x="408" y="118" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#c8c8c8" text-anchor="middle">A+</text>
@@ -38,71 +38,71 @@
     <rect x="482" y="16" width="262" height="188" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
     <text x="506" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="600" fill="#91a1f1">Most Used Languages</text>
     
-            <circle cx="506" cy="60" r="4" fill="#555555"/>
-            <text x="517" y="64" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C <tspan fill="#8c8c8c">49.0%</tspan></text>
+            <circle cx="506" cy="60" r="4" fill="#f34b7d"/>
+            <text x="517" y="64" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C++ <tspan fill="#8c8c8c">45.5%</tspan></text>
         
-            <circle cx="506" cy="82" r="4" fill="#f34b7d"/>
-            <text x="517" y="86" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C++ <tspan fill="#8c8c8c">44.9%</tspan></text>
+            <circle cx="506" cy="82" r="4" fill="#555555"/>
+            <text x="517" y="86" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C <tspan fill="#8c8c8c">40.5%</tspan></text>
         
-            <circle cx="506" cy="104" r="4" fill="#e34c26"/>
-            <text x="517" y="108" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">HTML <tspan fill="#8c8c8c">2.9%</tspan></text>
+            <circle cx="506" cy="104" r="4" fill="#f1e05a"/>
+            <text x="517" y="108" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">JavaScript <tspan fill="#8c8c8c">9.5%</tspan></text>
         
-            <circle cx="506" cy="126" r="4" fill="#3178c6"/>
-            <text x="517" y="130" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">TypeScript <tspan fill="#8c8c8c">1.7%</tspan></text>
+            <circle cx="506" cy="126" r="4" fill="#e34c26"/>
+            <text x="517" y="130" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">HTML <tspan fill="#8c8c8c">2.5%</tspan></text>
         
-            <circle cx="506" cy="148" r="4" fill="#427819"/>
-            <text x="517" y="152" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">Makefile <tspan fill="#8c8c8c">0.8%</tspan></text>
+            <circle cx="506" cy="148" r="4" fill="#3178c6"/>
+            <text x="517" y="152" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">TypeScript <tspan fill="#8c8c8c">1.4%</tspan></text>
         
-            <circle cx="506" cy="170" r="4" fill="#178600"/>
-            <text x="517" y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C# <tspan fill="#8c8c8c">0.8%</tspan></text>
+            <circle cx="506" cy="170" r="4" fill="#427819"/>
+            <text x="517" y="174" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">Makefile <tspan fill="#8c8c8c">0.6%</tspan></text>
         
     
             <circle cx="685" cy="119" r="34" fill="none"
-            stroke="#555555" stroke-width="10"
-            stroke-dasharray="104.68 108.95"
+            stroke="#f34b7d" stroke-width="10"
+            stroke-dasharray="97.20 116.43"
             stroke-dashoffset="0.00"
             transform="rotate(-90 685 119)"/>
         
 
             <circle cx="685" cy="119" r="34" fill="none"
-            stroke="#f34b7d" stroke-width="10"
-            stroke-dasharray="95.92 117.71"
-            stroke-dashoffset="-104.68"
+            stroke="#555555" stroke-width="10"
+            stroke-dasharray="86.52 127.11"
+            stroke-dashoffset="-97.20"
+            transform="rotate(-90 685 119)"/>
+        
+
+            <circle cx="685" cy="119" r="34" fill="none"
+            stroke="#f1e05a" stroke-width="10"
+            stroke-dasharray="20.29 193.33"
+            stroke-dashoffset="-183.72"
             transform="rotate(-90 685 119)"/>
         
 
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#e34c26" stroke-width="10"
-            stroke-dasharray="6.20 207.43"
-            stroke-dashoffset="-200.60"
+            stroke-dasharray="5.34 208.29"
+            stroke-dashoffset="-204.02"
             transform="rotate(-90 685 119)"/>
         
 
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#3178c6" stroke-width="10"
-            stroke-dasharray="3.63 210.00"
-            stroke-dashoffset="-206.79"
+            stroke-dasharray="2.99 210.64"
+            stroke-dashoffset="-209.36"
             transform="rotate(-90 685 119)"/>
         
 
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#427819" stroke-width="10"
-            stroke-dasharray="1.71 211.92"
-            stroke-dashoffset="-210.42"
-            transform="rotate(-90 685 119)"/>
-        
-
-            <circle cx="685" cy="119" r="34" fill="none"
-            stroke="#178600" stroke-width="10"
-            stroke-dasharray="1.71 211.92"
-            stroke-dashoffset="-212.13"
+            stroke-dasharray="1.28 212.35"
+            stroke-dashoffset="-212.35"
             transform="rotate(-90 685 119)"/>
         
 <circle cx="685" cy="119" r="20" fill="#1d1b1d"/>
 
     <rect x="16" y="220" width="728" height="220" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
 
-    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,426</text>
+    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,433</text>
     <text x="137" y="311" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
     <text x="137" y="324" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 - Present</text>
 
@@ -124,8 +124,8 @@
 
     
         <line x1="16" y1="390" x2="744" y2="390" stroke="#212022" stroke-width="0.5"/>
-        <rect x="32" y="401" width="127" height="26" rx="4" fill="#1db95422"/>
+        <rect x="32" y="401" width="305" height="26" rx="4" fill="#1db95422"/>
         <circle cx="44" cy="415" r="4" fill="#1db954"/>
-        <text x="56" y="420" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="#c8c8c8">Оу щит — kizaru</text>
+        <text x="56" y="420" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="#c8c8c8">Currently not playing on Spotify — Offline</text>
     
   </svg>
