@@ -30,7 +30,7 @@
 
     <circle cx="408" cy="112" r="38" fill="none" stroke="#212022" stroke-width="3"/>
     <circle cx="408" cy="112" r="38" fill="none" stroke="#91a1f1" stroke-width="3"
-      stroke-dasharray="163.3 75.4"
+      stroke-dasharray="163.3 75.5"
       stroke-dashoffset="0"
       transform="rotate(-90 408 112)"/>
     <text x="408" y="118" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#c8c8c8" text-anchor="middle">A+</text>
@@ -42,13 +42,13 @@
             <text x="517" y="64" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C++ <tspan fill="#8c8c8c">46.1%</tspan></text>
         
             <circle cx="506" cy="82" r="4" fill="#555555"/>
-            <text x="517" y="86" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C <tspan fill="#8c8c8c">40.3%</tspan></text>
+            <text x="517" y="86" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">C <tspan fill="#8c8c8c">40.2%</tspan></text>
         
             <circle cx="506" cy="104" r="4" fill="#f1e05a"/>
             <text x="517" y="108" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">JavaScript <tspan fill="#8c8c8c">9.2%</tspan></text>
         
             <circle cx="506" cy="126" r="4" fill="#e34c26"/>
-            <text x="517" y="130" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">HTML <tspan fill="#8c8c8c">2.4%</tspan></text>
+            <text x="517" y="130" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">HTML <tspan fill="#8c8c8c">2.5%</tspan></text>
         
             <circle cx="506" cy="148" r="4" fill="#3178c6"/>
             <text x="517" y="152" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#c8c8c8">TypeScript <tspan fill="#8c8c8c">1.4%</tspan></text>
@@ -66,7 +66,7 @@
 
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#555555" stroke-width="10"
-            stroke-dasharray="86.09 127.54"
+            stroke-dasharray="85.88 127.75"
             stroke-dashoffset="-98.48"
             transform="rotate(-90 685 119)"/>
         
@@ -74,14 +74,14 @@
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#f1e05a" stroke-width="10"
             stroke-dasharray="19.65 193.97"
-            stroke-dashoffset="-184.57"
+            stroke-dashoffset="-184.36"
             transform="rotate(-90 685 119)"/>
         
 
             <circle cx="685" cy="119" r="34" fill="none"
             stroke="#e34c26" stroke-width="10"
-            stroke-dasharray="5.13 208.50"
-            stroke-dashoffset="-204.23"
+            stroke-dasharray="5.34 208.29"
+            stroke-dashoffset="-204.02"
             transform="rotate(-90 685 119)"/>
         
 
@@ -102,7 +102,7 @@
 
     <rect x="16" y="220" width="728" height="220" rx="8" fill="#1d1b1d" stroke="#212022" stroke-width="0.5"/>
 
-    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,523</text>
+    <text x="137" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">1,526</text>
     <text x="137" y="311" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c" text-anchor="middle">Total Contributions</text>
     <text x="137" y="324" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Apr 30, 2024 - Present</text>
 
@@ -115,17 +115,17 @@
       <path d="M 19.48 12.35 c -1.57 -4.08 -7.16 -4.3 -5.81 -10.23 c .1 -.44 -.37 -.78 -.75 -.55 C 9.29 3.71 6.68 8 8.87 13.62 c .18 .46 -.36 .89 -.75 .59 c -1.81 -1.37 -2 -3.34 -1.84 -4.75 c .06 -.52 -.62 -.77 -.91 -.34 C 4.69 10.16 4 11.84 4 14.37 c .38 5.6 5.11 7.32 6.81 7.54 c 2.43 .31 5.06 -.14 6.95 -1.87 c 2.08 -1.93 2.84 -5.01 1.72 -7.69 z"
             fill="none" stroke="#91a1f1" stroke-width="3.00" stroke-linejoin="round" stroke-linecap="round"/>
     </g>
-    <text x="380" y="289" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">3</text>
+    <text x="380" y="289" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">4</text>
     <text x="380" y="344" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="700" fill="#91a1f1" text-anchor="middle">Current Streak</text>
-    <text x="380" y="362" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Jul 29 - Jul 31</text>
+    <text x="380" y="362" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#8c8c8c" text-anchor="middle">Jul 29 - Aug 1</text>
 
     <text x="621" y="293" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="25" font-weight="700" fill="#c8c8c8" text-anchor="middle">25</text>
     <text x="621" y="311" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#8c8c8c" text-anchor="middle">Longest Streak</text>
 
     
         <line x1="16" y1="390" x2="744" y2="390" stroke="#212022" stroke-width="0.5"/>
-        <rect x="32" y="401" width="134" height="26" rx="4" fill="#1db95422"/>
+        <rect x="32" y="401" width="140" height="26" rx="4" fill="#1db95422"/>
         <circle cx="44" cy="415" r="4" fill="#1db954"/>
-        <text x="56" y="420" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="#c8c8c8">Mess — Lil Wayne</text>
+        <text x="56" y="420" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="600" fill="#c8c8c8">Fakelove — Menual</text>
     
   </svg>
